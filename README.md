@@ -4,6 +4,8 @@
 > **Disciplinas:** Front-end Design e Web Development  
 > **Tema:** CitizenTech  
 > **Curso:** Engenharia de Software (1º Ano · Campus Paulista/Lins)  
+> **Link do Deploy (Vercel):** [https://zelasp-web.vercel.app/](https://zelasp-web.vercel.app/)  
+> **Repositório GitHub:** [https://github.com/ZelaSP/zelasp-web](https://github.com/ZelaSP/zelasp-web)  
 > **Integrantes:**
 > * Gustavo Rezende Louro — RM570708
 > * João Pedro Lagonegro Bosco e Silva — RM569444
