@@ -19,7 +19,7 @@
 * **Cidadão Beneficiado:** Moradores, pedestres, comerciantes e pessoas com mobilidade reduzida que enfrentam riscos diários com fiação aérea rompida, bueiros abertos, buracos e entulho nas vias.
 * **Problema em uma Frase:** O canal oficial atual (SP 156) é burocrático e opaco, desestimulando relatos rápidos e gerando centenas de chamados duplicados no mesmo quarteirão durante temporais.
 * **Como Funciona (Jornada em 3 Etapas):**
-  1. **Abertura Animada (`SplashScreen`):** Apresenta visualmente o funcionamento do ZelaSP (fio rompido entre postes -> relato geolocalizado -> reparo concluído) e os 3 passos da plataforma.
+  1. **Abertura Animada Sequencial (`SplashScreen`):** Apresenta visualmente, um de cada vez, os 4 problemas urbanos do ZelaSP (fio elétrico partido, bueiro aberto, entulho na calçada e carro abandonado) sendo relatados e resolvidos, além dos 3 passos da plataforma.
   2. **Login Demonstrativo por Perfil (`LoginScreen`):** Permite escolher entrar como **Cidadão** ou como **Prefeitura**.
   3. **Painéis Conectados em Tempo Real:**
      * **Área do Cidadão:** Focada em registrar ocorrências em <15 segundos (com autopreenchimento via **ViaCEP** e **GPS**) e apoiar chamados já abertos por vizinhos (**Apoiar +1**) sem criar duplicidade.
@@ -54,31 +54,30 @@
 ### Passo a passo para rodar na sua máquina:
 1. Clone o repositório (ou extraia o ZIP):
    ```bash
-   git clone <LINK_DO_REPOSITORIO_PRIVADO>
-   cd "04 - Front-end Design"
+   git clone https://github.com/ZelaSP/zelasp-web.git
+   cd zelasp-web
    ```
 2. Instale as dependências:
    ```bash
    npm install
    ```
-3. *(Opcional)* Para persistência em nuvem via **MockAPI**, crie um arquivo `.env` na raiz baseado no `.env.example`:
-   ```env
-   VITE_API_URL=https://SUA_CHAVE.mockapi.io/api/v1/ocorrencias
-   ```
-   *(Caso não configure o `.env`, a aplicação roda normalmente com armazenamento local em `localStorage` e consulta real ao ViaCEP).*
-4. Inicie o servidor de desenvolvimento:
+3. Inicie o servidor de desenvolvimento:
    ```bash
    npm run dev
    ```
-5. Acesse no navegador o endereço exibido no terminal (geralmente `http://localhost:5173`).
+4. Acesse no navegador o endereço exibido no terminal (geralmente `http://localhost:5173`).
 
 ---
 
-## ☁️ Como Configurar o MockAPI (1 minuto)
+## 🌐 APIs Externas Integradas (Prontas para Uso)
 
-1. Acesse [mockapi.io](https://mockapi.io/) e faça login gratuito com sua conta do GitHub.
-2. Crie um novo projeto chamado **`zelasp`**.
-3. Clique em **New Resource** e nomeie exatamente como **`ocorrencias`** (pode manter o campo padrão `id`).
-4. Copie a URL gerada (`https://...mockapi.io/api/v1/ocorrencias`).
-5. Cole no arquivo `.env` local (`VITE_API_URL=...`) e também nas **Environment Variables** da Vercel ao fazer o deploy.
-   *(Na primeira vez que o site abrir, ele já popula automaticamente o MockAPI vazio com as 6 ocorrências iniciais de São Paulo).*
+O projeto **já vem pré-configurado** com a chave da equipe, não sendo necessário criar conta nem configurar variáveis de ambiente para testar:
+
+1. **MockAPI REST (`https://6af20abf42c6561ced38f16e.mockapi.io/ocorrencias`):**
+   * Configurada diretamente em `src/services/api.js` para executar o **CRUD completo** em nuvem:
+     * **`GET /ocorrencias`** — Lista os chamados registrados em São Paulo.
+     * **`POST /ocorrencias`** — Cria um novo relato aberto pelo Cidadão.
+     * **`PUT /ocorrencias/:id`** — Soma apoio comunitário (**Apoiar +1**) ou registra o despacho/mudança de status da Prefeitura.
+     * **`DELETE /ocorrencias/:id`** — Remove chamados descartados pela Prefeitura.
+2. **ViaCEP (`https://viacep.com.br/ws/{cep}/json/`):**
+   * Configurada em `src/services/viaCepService.js` e consumida pelo hook `useViaCep` para preencher automaticamente logradouro e bairro ao digitar os 8 dígitos do CEP.
