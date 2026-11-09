@@ -1,4 +1,4 @@
-import { Camera, ThumbsUp, Wrench, ArrowRight } from 'lucide-react';
+import { Camera, ThumbsUp, Wrench, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 const PASSOS = [
   {
@@ -18,6 +18,13 @@ const PASSOS = [
   },
 ];
 
+const OCORRENCIAS_CENA = [
+  'Fio elétrico partido',
+  'Entulho na calçada',
+  'Bueiro aberto',
+  'Carro abandonado',
+];
+
 export function SplashScreen({ onConcluir }) {
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4 py-10">
@@ -31,16 +38,17 @@ export function SplashScreen({ onConcluir }) {
 
       <div className="w-full max-w-2xl text-center">
         <svg
-          viewBox="0 0 320 170"
-          className="mx-auto w-full max-w-sm"
+          viewBox="0 0 420 190"
+          className="mx-auto w-full max-w-lg"
           role="img"
-          aria-label="Ilustração: um fio rompido entre dois postes é relatado e religado"
+          aria-label="Ilustração: fio rompido, entulho na calçada, bueiro aberto e carro abandonado são relatados e resolvidos"
         >
+          {/* Linha da calçada (meio-fio) */}
           <line
-            x1="10"
-            y1="150"
-            x2="310"
-            y2="150"
+            x1="15"
+            y1="142"
+            x2="405"
+            y2="142"
             pathLength="1"
             className="zs-draw"
             stroke="#cbd5e1"
@@ -48,8 +56,23 @@ export function SplashScreen({ onConcluir }) {
             strokeLinecap="round"
           />
 
+          {/* Faixa da rua / asfalto */}
+          <line
+            x1="15"
+            y1="168"
+            x2="405"
+            y2="168"
+            pathLength="1"
+            className="zs-draw"
+            stroke="#e2e8f0"
+            strokeWidth="2"
+            strokeDasharray="6 6"
+            strokeLinecap="round"
+          />
+
+          {/* Postes de energia (esquerda e direita) */}
           <path
-            d="M70 150 V40 M58 46 H82"
+            d="M75 142 V38 M61 44 H89"
             pathLength="1"
             className="zs-draw zs-atraso-1"
             stroke="#334155"
@@ -58,7 +81,7 @@ export function SplashScreen({ onConcluir }) {
             fill="none"
           />
           <path
-            d="M250 150 V40 M238 46 H262"
+            d="M345 142 V38 M331 44 H359"
             pathLength="1"
             className="zs-draw zs-atraso-1"
             stroke="#334155"
@@ -67,50 +90,237 @@ export function SplashScreen({ onConcluir }) {
             fill="none"
           />
 
+          {/* 1. FIO ELÉTRICO PARTIDO (antes do reparo) */}
           <g className="zs-fio-quebrado">
             <g className="zs-balanca-esq">
               <path
-                d="M82 46 Q110 70 128 112"
+                d="M89 44 Q125 68 144 106"
                 stroke="#d97706"
                 strokeWidth="3"
                 strokeLinecap="round"
                 fill="none"
               />
-              <circle cx="128" cy="112" r="4" fill="#fbbf24" className="zs-faisca" />
+              <circle cx="144" cy="106" r="4" fill="#fbbf24" className="zs-faisca" />
             </g>
             <g className="zs-balanca-dir">
               <path
-                d="M238 46 Q212 66 196 104"
+                d="M331 44 Q296 66 276 102"
                 stroke="#d97706"
                 strokeWidth="3"
                 strokeLinecap="round"
                 fill="none"
               />
-              <circle cx="196" cy="104" r="4" fill="#fbbf24" className="zs-faisca" />
+              <circle cx="276" cy="102" r="4" fill="#fbbf24" className="zs-faisca" />
             </g>
           </g>
 
+          {/* 1B. FIO RELIGADO (após reparo) */}
           <path
-            d="M82 46 Q160 84 238 46"
+            d="M89 44 Q210 82 331 44"
             pathLength="1"
             className="zs-reparo"
             stroke="#059669"
-            strokeWidth="3"
+            strokeWidth="3.2"
             strokeLinecap="round"
             fill="none"
           />
 
+          {/* 2. ENTULHO NA CALÇADA (blocos, tábuas e detritos à esquerda) */}
+          <g className="zs-problema-solo">
+            {/* Monte de terra/detritos */}
+            <path
+              d="M98 142 Q114 122 132 128 Q146 118 160 142 Z"
+              fill="#d6d3d1"
+              stroke="#78716c"
+              strokeWidth="2"
+              strokeLinejoin="round"
+            />
+            {/* Tijolos/blocos quebrados */}
+            <rect
+              x="108"
+              y="129"
+              width="14"
+              height="8"
+              rx="1.5"
+              transform="rotate(-14 108 129)"
+              fill="#ea580c"
+            />
+            <rect
+              x="128"
+              y="126"
+              width="15"
+              height="8"
+              rx="1.5"
+              transform="rotate(18 128 126)"
+              fill="#b45309"
+            />
+            {/* Tábua inclinada */}
+            <line
+              x1="104"
+              y1="122"
+              x2="148"
+              y2="138"
+              stroke="#92400e"
+              strokeWidth="3"
+              strokeLinecap="round"
+            />
+            <text
+              x="129"
+              y="115"
+              textAnchor="middle"
+              fill="#b45309"
+              fontSize="8.5"
+              fontWeight="700"
+            >
+              ENTULHO
+            </text>
+          </g>
+          {/* Check verde onde o entulho foi limpo */}
+          <g className="zs-check-ok">
+            <circle cx="129" cy="130" r="8" fill="#d1fae5" stroke="#059669" strokeWidth="1.8" />
+            <path
+              d="M125.5 130 L128 132.5 L133 127.5"
+              fill="none"
+              stroke="#059669"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </g>
+
+          {/* 3. BUEIRO ABERTO NA RUA (centro da via) */}
+          <g className="zs-problema-solo">
+            {/* Tampa solta deslocada ao lado */}
+            <ellipse
+              cx="176"
+              cy="158"
+              rx="14"
+              ry="4.5"
+              fill="#64748b"
+              stroke="#334155"
+              strokeWidth="1.5"
+            />
+            {/* Buraco escuro do bueiro sem tampa */}
+            <ellipse
+              cx="210"
+              cy="156"
+              rx="22"
+              ry="6.5"
+              fill="#0f172a"
+              stroke="#dc2626"
+              strokeWidth="2"
+            />
+            {/* Linhas de alerta saindo do bueiro aberto */}
+            <line x1="202" y1="146" x2="200" y2="138" stroke="#dc2626" strokeWidth="2" strokeLinecap="round" />
+            <line x1="210" y1="145" x2="210" y2="136" stroke="#dc2626" strokeWidth="2" strokeLinecap="round" />
+            <line x1="218" y1="146" x2="220" y2="138" stroke="#dc2626" strokeWidth="2" strokeLinecap="round" />
+            <text
+              x="210"
+              y="131"
+              textAnchor="middle"
+              fill="#dc2626"
+              fontSize="8.5"
+              fontWeight="700"
+            >
+              BUEIRO ABERTO
+            </text>
+          </g>
+          {/* Tampa selada em verde cobrindo o bueiro após o reparo */}
+          <g className="zs-tampa-bueiro">
+            <ellipse
+              cx="210"
+              cy="156"
+              rx="22"
+              ry="6.5"
+              fill="#10b981"
+              stroke="#047857"
+              strokeWidth="2"
+            />
+            <line x1="196" y1="156" x2="224" y2="156" stroke="#064e3b" strokeWidth="1.5" strokeLinecap="round" />
+          </g>
+
+          {/* 4. CARRO ABANDONADO NA RUA (direita, inclinado e enferrujado) */}
+          <g className="zs-carro-abandonado">
+            {/* Carcaça inclinada do veículo */}
+            <g transform="rotate(4 294 146)">
+              <path
+                d="M262 150 L267 138 L279 130 L306 130 L316 139 L326 141 L326 150 Z"
+                fill="#cbd5e1"
+                stroke="#64748b"
+                strokeWidth="2"
+                strokeLinejoin="round"
+              />
+              {/* Janelas com rachadura */}
+              <path d="M280 133 H303 L310 139 H272 Z" fill="#f8fafc" stroke="#64748b" strokeWidth="1.3" />
+              <line x1="286" y1="133" x2="292" y2="139" stroke="#dc2626" strokeWidth="1.3" />
+              {/* Manchas de ferrugem */}
+              <circle cx="278" cy="145" r="2.5" fill="#b45309" opacity="0.7" />
+              <circle cx="308" cy="144" r="3" fill="#b45309" opacity="0.7" />
+              {/* Rodas (uma murcha/faltando) */}
+              <circle cx="274" cy="151" r="5.5" fill="#334155" />
+              <ellipse cx="313" cy="152" rx="6" ry="3.2" fill="#334155" />
+            </g>
+            <text
+              x="294"
+              y="121"
+              textAnchor="middle"
+              fill="#64748b"
+              fontSize="8.5"
+              fontWeight="700"
+            >
+              ABANDONADO
+            </text>
+          </g>
+          {/* Check verde onde o carro abandonado foi removido */}
+          <g className="zs-check-ok">
+            <circle cx="294" cy="142" r="8" fill="#d1fae5" stroke="#059669" strokeWidth="1.8" />
+            <path
+              d="M290.5 142 L293 144.5 L298 139.5"
+              fill="none"
+              stroke="#059669"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </g>
+
+          {/* Onda de acionamento e Pino central do ZelaSP */}
+          <circle
+            cx="210"
+            cy="32"
+            r="16"
+            fill="none"
+            stroke="#3b82f6"
+            strokeWidth="2"
+            className="zs-onda"
+          />
           <g className="zs-pino">
             <path
-              d="M160 4 c-11 0 -20 9 -20 20 c0 15 20 34 20 34 s20 -19 20 -34 c0 -11 -9 -20 -20 -20z"
+              d="M210 6 c-11 0 -20 9 -20 20 c0 15 20 34 20 34 s20 -19 20 -34 c0 -11 -9 -20 -20 -20z"
               fill="#1e40af"
             />
-            <circle cx="160" cy="24" r="7" fill="#ffffff" />
+            <circle cx="210" cy="26" r="7" fill="#ffffff" />
           </g>
         </svg>
 
+        {/* Etiquetas das 4 ocorrências urbanas resolvidas na cena */}
         <div
-          className="zs-surgir mt-2 flex items-center justify-center gap-3"
+          className="zs-surgir mt-2 flex flex-wrap items-center justify-center gap-2"
+          style={{ animationDelay: '2.6s' }}
+        >
+          {OCORRENCIAS_CENA.map((item) => (
+            <span
+              key={item}
+              className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800"
+            >
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+              {item}
+            </span>
+          ))}
+        </div>
+
+        <div
+          className="zs-surgir mt-5 flex items-center justify-center gap-3"
           style={{ animationDelay: '2.9s' }}
         >
           <img
@@ -127,8 +337,8 @@ export function SplashScreen({ onConcluir }) {
           className="zs-surgir mx-auto mt-3 max-w-xl text-base text-slate-600 sm:text-lg"
           style={{ animationDelay: '3.2s' }}
         >
-          Fio caído, bueiro aberto, entulho na calçada: a vizinhança avisa, a prefeitura
-          resolve e todo mundo acompanha.
+          Fio caído, bueiro aberto, entulho na calçada ou carro abandonado: a vizinhança
+          avisa, a prefeitura resolve e todo mundo acompanha.
         </p>
 
         <ul className="mt-8 grid gap-3 text-left sm:grid-cols-3">
