@@ -25,11 +25,11 @@
 * **Resposta obtida:**  
   Foram gerados os componentes `SplashScreen.jsx` (com animações `stroke-dashoffset` em `index.css`), `LoginScreen.jsx` (com seleção de perfil Cidadão/Prefeitura) e o Custom Hook `useSessao.js` para gerenciar a transição entre abertura, login e os dois painéis conectados aos mesmos dados.
 
-### Interação 2 — Inclusão dos 4 Problemas Urbanos e Animação Sequencial
+### Interação 2 — Inclusão dos 4 Problemas Urbanos, Animação Sequencial e Cena Final de Capa
 * **Prompt enviado:**  
-  *"Inclua na animação o bueiro aberto, entulho na calçada e carro abandonado na rua. Não faça os 4 problemas simultaneamente, deixe um de cada vez, mesmo que aumente o tempo."*
+  *"Inclua na animação o bueiro aberto, entulho na calçada e carro abandonado na rua. Não faça os 4 problemas simultaneamente, deixe um de cada vez, mesmo que aumente o tempo. Quando ela finaliza, complete o próprio desenho SVG com cenário de 'Rua de SP Revitalizada' (prédios, árvores, postes acesos e selo central) para não ficar a animação final congelada."*
 * **Resposta obtida:**  
-  A animação em `SplashScreen.jsx` e `index.css` foi expandida com os 4 elementos em SVG (fio elétrico partido, bueiro aberto sem tampa, pilha de entulho na calçada e carcaça de carro abandonado na rua) e refatorada com `useState` e `useEffect` para exibir um problema de cada vez em etapas de 3 segundos (problema surge -> pino de localização desce sobre ele -> reparo é concluído e permanece resolvido na rua enquanto o próximo problema inicia), além de botões interativos para rever cada cena.
+  A animação em `SplashScreen.jsx` e `index.css` foi expandida com os 4 elementos em SVG (fio elétrico partido, bueiro aberto sem tampa, pilha de entulho na calçada e carcaça de carro abandonado na rua) exibidos um de cada vez em etapas de 3 segundos e, ao encerrar a 4ª etapa, faz uma transição suave para uma ilustração completa de capa com prédios de São Paulo ao fundo, árvores na calçada, postes acesos e o selo central *"Rua Revitalizada • ZelaSP"*.
 
 ### Interação 3 — Arquitetura de Custom Hooks e Separação de Camadas
 * **Prompt enviado:**  

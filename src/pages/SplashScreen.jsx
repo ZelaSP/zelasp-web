@@ -118,8 +118,142 @@ export function SplashScreen({ onConcluir }) {
           viewBox="0 0 420 190"
           className="mx-auto w-full max-w-lg"
           role="img"
-          aria-label="Ilustração passo a passo: fio rompido, bueiro aberto, entulho na calçada e carro abandonado são relatados e resolvidos um de cada vez"
+          aria-label="Ilustração passo a passo: fio rompido, bueiro aberto, entulho na calçada e carro abandonado são relatados e resolvidos um de cada vez, finalizando com a rua de São Paulo revitalizada"
         >
+          <defs>
+            <linearGradient id="zsCeuFinal" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#eff6ff" />
+              <stop offset="100%" stopColor="#ecfdf5" />
+            </linearGradient>
+            <radialGradient id="zsHaloLuz" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#fde047" stopOpacity="0.85" />
+              <stop offset="100%" stopColor="#fde047" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+
+          {/* ==========================================================
+              CAPA FINAL (etapa === 4): CENÁRIO "RUA DE SP REVITALIZADA"
+             ========================================================== */}
+          {etapa >= CENAS.length && (
+            <g className="zs-cena-final">
+              {/* Céu suave de fundo da capa */}
+              <rect
+                x="10"
+                y="6"
+                width="400"
+                height="174"
+                rx="16"
+                fill="url(#zsCeuFinal)"
+                stroke="#bfdbfe"
+                strokeWidth="1.5"
+              />
+
+              {/* Faixa de asfalto limpo na base */}
+              <path
+                d="M11 142 H409 V164 C409 172 402 179 394 179 H26 C18 179 11 172 11 164 Z"
+                fill="#f1f5f9"
+              />
+
+              {/* Silhueta de prédios de São Paulo ao fundo */}
+              {/* Prédio 1 (esquerda) */}
+              <rect x="26" y="74" width="36" height="68" rx="2" fill="#dbeafe" />
+              <rect x="32" y="82" width="6" height="6" rx="1" fill="#ffffff" />
+              <rect x="42" y="82" width="6" height="6" rx="1" fill="#fef08a" />
+              <rect x="32" y="94" width="6" height="6" rx="1" fill="#ffffff" />
+              <rect x="42" y="94" width="6" height="6" rx="1" fill="#ffffff" />
+              <rect x="32" y="106" width="6" height="6" rx="1" fill="#fef08a" />
+              <rect x="42" y="106" width="6" height="6" rx="1" fill="#ffffff" />
+
+              {/* Prédio 2 (centro-esquerda) */}
+              <rect x="148" y="56" width="44" height="86" rx="3" fill="#cbd5e1" />
+              <rect x="155" y="64" width="7" height="7" rx="1" fill="#fef08a" />
+              <rect x="167" y="64" width="7" height="7" rx="1" fill="#ffffff" />
+              <rect x="179" y="64" width="7" height="7" rx="1" fill="#ffffff" />
+              <rect x="155" y="77" width="7" height="7" rx="1" fill="#ffffff" />
+              <rect x="167" y="77" width="7" height="7" rx="1" fill="#fef08a" />
+              <rect x="179" y="77" width="7" height="7" rx="1" fill="#ffffff" />
+              <rect x="155" y="90" width="7" height="7" rx="1" fill="#ffffff" />
+              <rect x="167" y="90" width="7" height="7" rx="1" fill="#ffffff" />
+              <rect x="179" y="90" width="7" height="7" rx="1" fill="#fef08a" />
+              <rect x="155" y="103" width="7" height="7" rx="1" fill="#fef08a" />
+              <rect x="167" y="103" width="7" height="7" rx="1" fill="#ffffff" />
+              <rect x="179" y="103" width="7" height="7" rx="1" fill="#ffffff" />
+
+              {/* Prédio 3 (centro-direita) */}
+              <rect x="228" y="66" width="46" height="76" rx="3" fill="#dbeafe" />
+              <rect x="236" y="75" width="7" height="7" rx="1" fill="#ffffff" />
+              <rect x="248" y="75" width="7" height="7" rx="1" fill="#fef08a" />
+              <rect x="260" y="75" width="7" height="7" rx="1" fill="#ffffff" />
+              <rect x="236" y="88" width="7" height="7" rx="1" fill="#fef08a" />
+              <rect x="248" y="88" width="7" height="7" rx="1" fill="#ffffff" />
+              <rect x="260" y="88" width="7" height="7" rx="1" fill="#ffffff" />
+              <rect x="236" y="101" width="7" height="7" rx="1" fill="#ffffff" />
+              <rect x="248" y="101" width="7" height="7" rx="1" fill="#fef08a" />
+              <rect x="260" y="101" width="7" height="7" rx="1" fill="#ffffff" />
+
+              {/* Prédio 4 (direita) */}
+              <rect x="358" y="78" width="36" height="64" rx="2" fill="#cbd5e1" />
+              <rect x="365" y="86" width="6" height="6" rx="1" fill="#fef08a" />
+              <rect x="376" y="86" width="6" height="6" rx="1" fill="#ffffff" />
+              <rect x="365" y="98" width="6" height="6" rx="1" fill="#ffffff" />
+              <rect x="376" y="98" width="6" height="6" rx="1" fill="#fef08a" />
+              <rect x="365" y="110" width="6" height="6" rx="1" fill="#ffffff" />
+              <rect x="376" y="110" width="6" height="6" rx="1" fill="#ffffff" />
+
+              {/* Árvore 1 na calçada esquerda (onde antes havia entulho) */}
+              <rect x="116" y="118" width="5" height="24" rx="2" fill="#78716c" />
+              <circle cx="118.5" cy="108" r="15" fill="#10b981" />
+              <circle cx="110" cy="113" r="11" fill="#059669" />
+              <circle cx="127" cy="113" r="11" fill="#34d399" />
+
+              {/* Árvore 2 na calçada direita (onde antes havia o carro abandonado) */}
+              <rect x="300" y="118" width="5" height="24" rx="2" fill="#78716c" />
+              <circle cx="302.5" cy="108" r="15" fill="#10b981" />
+              <circle cx="294" cy="113" r="11" fill="#34d399" />
+              <circle cx="311" cy="113" r="11" fill="#059669" />
+
+              {/* Halos de luz acesa nos dois postes */}
+              <g className="zs-luz-poste">
+                <circle cx="75" cy="38" r="22" fill="url(#zsHaloLuz)" />
+                <circle cx="75" cy="38" r="5.5" fill="#facc15" stroke="#ca8a04" strokeWidth="1.5" />
+                <circle cx="345" cy="38" r="22" fill="url(#zsHaloLuz)" />
+                <circle cx="345" cy="38" r="5.5" fill="#facc15" stroke="#ca8a04" strokeWidth="1.5" />
+              </g>
+
+              {/* Selo Central de Capa no Topo da Cena */}
+              <rect
+                x="118"
+                y="16"
+                width="184"
+                height="26"
+                rx="13"
+                fill="#065f46"
+                stroke="#a7f3d0"
+                strokeWidth="1.5"
+              />
+              <circle cx="134" cy="29" r="6" fill="#10b981" />
+              <path
+                d="M131.5 29 L133.5 31 L137 27"
+                fill="none"
+                stroke="#ffffff"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <text
+                x="216"
+                y="32.5"
+                textAnchor="middle"
+                fill="#ffffff"
+                fontSize="9.5"
+                fontWeight="700"
+                letterSpacing="0.4"
+              >
+                RUA REVITALIZADA • ZELASP
+              </text>
+            </g>
+          )}
+
           {/* Linha da calçada (meio-fio) */}
           <line
             x1="15"
@@ -128,7 +262,7 @@ export function SplashScreen({ onConcluir }) {
             y2="142"
             pathLength="1"
             className="zs-draw"
-            stroke="#cbd5e1"
+            stroke="#94a3b8"
             strokeWidth="3"
             strokeLinecap="round"
           />
@@ -141,7 +275,7 @@ export function SplashScreen({ onConcluir }) {
             y2="168"
             pathLength="1"
             className="zs-draw"
-            stroke="#e2e8f0"
+            stroke="#cbd5e1"
             strokeWidth="2"
             strokeDasharray="6 6"
             strokeLinecap="round"
@@ -346,7 +480,7 @@ export function SplashScreen({ onConcluir }) {
               </g>
             </g>
           )}
-          {etapa > 2 && (
+          {etapa === 3 && (
             <g>
               <circle cx="129" cy="130" r="8" fill="#d1fae5" stroke="#059669" strokeWidth="1.8" />
               <path
@@ -403,19 +537,6 @@ export function SplashScreen({ onConcluir }) {
                   strokeLinejoin="round"
                 />
               </g>
-            </g>
-          )}
-          {etapa > 3 && (
-            <g>
-              <circle cx="294" cy="142" r="8" fill="#d1fae5" stroke="#059669" strokeWidth="1.8" />
-              <path
-                d="M290.5 142 L293 144.5 L298 139.5"
-                fill="none"
-                stroke="#059669"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
             </g>
           )}
 
