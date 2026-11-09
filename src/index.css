@@ -14,3 +14,131 @@
     outline-offset: 2px;
   }
 }
+
+/* Animação de abertura: fio rompido -> relato -> reparo */
+.zs-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: zs-draw 0.7s ease-out forwards;
+}
+
+.zs-atraso-1 {
+  animation-delay: 0.3s;
+}
+
+.zs-fio-quebrado {
+  opacity: 0;
+  animation: zs-fio-quebrado 2.8s ease forwards;
+}
+
+.zs-balanca-esq {
+  transform-origin: 82px 46px;
+  animation: zs-balanca 0.9s ease-in-out 0.9s 2 alternate both;
+}
+
+.zs-balanca-dir {
+  transform-origin: 238px 46px;
+  animation: zs-balanca 0.9s ease-in-out 1s 2 alternate-reverse both;
+}
+
+.zs-faisca {
+  opacity: 0;
+  animation: zs-pisca 0.3s linear 1s 5;
+}
+
+.zs-pino {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: zs-pino 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 1.5s forwards;
+}
+
+.zs-reparo {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: zs-draw 0.8s ease-out 2.3s forwards;
+}
+
+.zs-surgir {
+  opacity: 0;
+  animation: zs-surgir 0.6s ease-out forwards;
+}
+
+@keyframes zs-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes zs-fio-quebrado {
+  0%,
+  30% {
+    opacity: 0;
+  }
+  38%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes zs-balanca {
+  from {
+    transform: rotate(-5deg);
+  }
+  to {
+    transform: rotate(5deg);
+  }
+}
+
+@keyframes zs-pisca {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes zs-pino {
+  from {
+    opacity: 0;
+    transform: translateY(-36px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes zs-surgir {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zs-draw,
+  .zs-reparo {
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+  .zs-fio-quebrado,
+  .zs-faisca {
+    display: none;
+  }
+  .zs-pino,
+  .zs-surgir {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
