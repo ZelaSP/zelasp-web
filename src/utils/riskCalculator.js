@@ -48,10 +48,34 @@ export function gerarProtocolo(ocorrencias = []) {
   return `SP-2026-${proximo}`;
 }
 
+/**
+ * Gera data/hora ISO no fuso horário de São Paulo/Brasília (America/Sao_Paulo, UTC-3)
+ * em vez de UTC (Z), para que o JSON no MockAPI mostre o horário local real.
+ */
+export function gerarDataHoraSp(data = new Date()) {
+  const opcoes = {
+    timeZone: 'America/Sao_Paulo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  };
+  const partes = Object.fromEntries(
+    new Intl.DateTimeFormat('en-CA', opcoes)
+      .formatToParts(data)
+      .map(({ type, value }) => [type, value])
+  );
+  return `${partes.year}-${partes.month}-${partes.day}T${partes.hour}:${partes.minute}:${partes.second}-03:00`;
+}
+
 export function formatarDataBr(isoDate) {
   if (!isoDate) return 'Recente';
   try {
     return new Intl.DateTimeFormat('pt-BR', {
+      timeZone: 'America/Sao_Paulo',
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',

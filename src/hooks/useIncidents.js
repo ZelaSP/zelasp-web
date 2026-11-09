@@ -10,6 +10,7 @@ import {
   calcularPrioridade,
   gerarProtocolo,
   avaliarRiscoTerritorial,
+  gerarDataHoraSp,
 } from '../utils/riskCalculator';
 
 /**
@@ -67,7 +68,7 @@ export function useIncidents() {
         nivelPrioridade,
         status: 'ABERTO',
         apoios: 1,
-        criadoEm: new Date().toISOString(),
+        criadoEm: gerarDataHoraSp(),
         notaTecnica: dadosFormulario.fotoNome
           ? `Evidência anexada: ${dadosFormulario.fotoNome}`
           : 'Relato enviado pelo cidadão via ZelaSP Web.',
