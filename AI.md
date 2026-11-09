@@ -25,19 +25,25 @@
 * **Resposta obtida:**  
   Foram gerados os componentes `SplashScreen.jsx` (com animações `stroke-dashoffset` em `index.css`), `LoginScreen.jsx` (com seleção de perfil Cidadão/Prefeitura) e o Custom Hook `useSessao.js` para gerenciar a transição entre abertura, login e os dois painéis conectados aos mesmos dados.
 
-### Interação 2 — Arquitetura de Custom Hooks e Separação de Camadas
+### Interação 2 — Inclusão dos 4 Problemas Urbanos e Animação Sequencial
+* **Prompt enviado:**  
+  *"Inclua na animação o bueiro aberto, entulho na calçada e carro abandonado na rua. Não faça os 4 problemas simultaneamente, deixe um de cada vez, mesmo que aumente o tempo."*
+* **Resposta obtida:**  
+  A animação em `SplashScreen.jsx` e `index.css` foi expandida com os 4 elementos em SVG (fio elétrico partido, bueiro aberto sem tampa, pilha de entulho na calçada e carcaça de carro abandonado na rua) e refatorada com `useState` e `useEffect` para exibir um problema de cada vez em etapas de 3 segundos (problema surge -> pino de localização desce sobre ele -> reparo é concluído e permanece resolvido na rua enquanto o próximo problema inicia), além de botões interativos para rever cada cena.
+
+### Interação 3 — Arquitetura de Custom Hooks e Separação de Camadas
 * **Prompt enviado:**  
   *"Como organizar um projeto React com Vite e Tailwind CSS separando a lógica de acesso a dados (CRUD com MockAPI e ViaCEP) em serviços e Custom Hooks reutilizáveis (`useIncidents`, `useViaCep`, `useGeolocation`, `useSessao` e `useToast`), mantendo os componentes visuais limpos?"*
 * **Resposta obtida:**  
   A IA estruturou a divisão em `src/services/`, `src/hooks/`, `src/pages/` e `src/components/`, utilizando `useCallback` e `useMemo` dentro do hook `useIncidents` para filtrar ocorrências e atualizar o estado da lista após requisições `POST`, `PUT` e `DELETE`.
 
-### Interação 3 — Integração com ViaCEP e Geolocalização
+### Interação 4 — Integração com ViaCEP e Geolocalização
 * **Prompt enviado:**  
   *"Crie um Custom Hook em React que consulte a API pública do ViaCEP ao informar 8 dígitos, valide erros de CEP inexistente e preencha automaticamente a rua e o bairro no formulário sem travar a digitação do usuário."*
 * **Resposta obtida:**  
   Foi gerado o hook `useViaCep` com estados dedicados (`buscandoCep`, `erroCep`) e tratamento para CEPs inválidos (`dados.erro === true`).
 
-### Interação 4 — Apoio na Formatação e Redação dos Textos
+### Interação 5 — Apoio na Formatação e Redação dos Textos
 * **Prompt enviado:**  
   *"Ajude a revisar a escrita dos textos da interface voltada ao cidadão de São Paulo e ao operador da prefeitura, mantendo linguagem simples e direta, e ajude na formatação estrutural da documentação em Markdown (`README.md` e `AI.md`) para entrega aos professores."*
 * **Resposta obtida:**  
