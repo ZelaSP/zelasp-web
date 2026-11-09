@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, Building2, LogIn, Info } from 'lucide-react';
+import { User, Building2, LogIn, Info, Play } from 'lucide-react';
 
 const PERFIS = {
   cidadao: {
@@ -20,7 +20,7 @@ const PERFIS = {
 
 const BAIRROS = ['Jabaquara', 'Vila Mariana', 'Saúde', 'Bela Vista', 'Mooca', 'Vila Mascote'];
 
-export function LoginScreen({ onEntrar }) {
+export function LoginScreen({ onEntrar, onReverAbertura }) {
   const [perfil, setPerfil] = useState('cidadao');
   const config = PERFIS[perfil];
 
@@ -141,8 +141,21 @@ export function LoginScreen({ onEntrar }) {
           <p className="mt-4 flex items-start gap-2 rounded-lg border border-slate-200 bg-white p-3 text-xs leading-relaxed text-slate-600">
             <Info className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
             Protótipo acadêmico: o login é demonstrativo e não valida senha. O que for relatado
-            no modo Cidadão aparece no Painel da Prefeitura.
+            no modo Cidadão aparece imediatamente no Painel da Prefeitura.
           </p>
+
+          {onReverAbertura && (
+            <div className="mt-4 text-center">
+              <button
+                type="button"
+                onClick={onReverAbertura}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-800 hover:underline"
+              >
+                <Play className="h-3.5 w-3.5" />
+                Rever animação de abertura do ZelaSP
+              </button>
+            </div>
+          )}
         </form>
       </main>
     </div>

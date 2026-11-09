@@ -18,7 +18,12 @@
 * **Cidade e Bairros de Atuação:** São Paulo — SP (foco prioritário em **Jabaquara, Vila Mariana, Saúde, Bela Vista, Mooca e Vila Mascote**).
 * **Cidadão Beneficiado:** Moradores, pedestres, comerciantes e pessoas com mobilidade reduzida que enfrentam riscos diários com fiação aérea rompida, bueiros abertos, buracos e entulho nas vias.
 * **Problema em uma Frase:** O canal oficial atual (SP 156) é burocrático e opaco, desestimulando relatos rápidos e gerando centenas de chamados duplicados no mesmo quarteirão durante temporais.
-* **Como Funciona:** O cidadão registra um relato em <15 segundos com autopreenchimento de endereço via **ViaCEP** e coordenadas por GPS; consulta incidentes abertos no bairro sem criar duplicidade (usando o botão **Apoiar**); e acompanha a atualização de status da subprefeitura/concessionária em tempo real.
+* **Como Funciona (Jornada em 3 Etapas):**
+  1. **Abertura Animada (`SplashScreen`):** Apresenta visualmente o funcionamento do ZelaSP (fio rompido entre postes -> relato geolocalizado -> reparo concluído) e os 3 passos da plataforma.
+  2. **Login Demonstrativo por Perfil (`LoginScreen`):** Permite escolher entrar como **Cidadão** ou como **Prefeitura**.
+  3. **Painéis Conectados em Tempo Real:**
+     * **Área do Cidadão:** Focada em registrar ocorrências em <15 segundos (com autopreenchimento via **ViaCEP** e **GPS**) e apoiar chamados já abertos por vizinhos (**Apoiar +1**) sem criar duplicidade.
+     * **Painel da Prefeitura:** Focado na triagem operacional por gravidade e apoio comunitário, monitoramento do Gatilho Preditivo de Contingência Territorial (**GPCT**), atualização de parecer de vistoria/status (`PUT`) e exclusão de registros inválidos (`DELETE`).
 * **Indicador de Impacto:** Redução do tempo médio de relato para <30 segundos e eliminação de duplicidade de demandas no mesmo raio urbano.
 * **ODS Conectados:** ODS 11 (Cidades e Comunidades Sustentáveis) e ODS 9 (Indústria, Inovação e Infraestrutura).
 
@@ -29,14 +34,14 @@
 | Requisito Oficial | Implementação no Projeto |
 | :--- | :--- |
 | **React + Vite** | Configurado com Vite 5 e React 18 em JavaScript moderno (`ESM`). |
-| **Tailwind CSS** | Tema claro cívico acessível (`slate-50` + `blue-800`), responsivo e *mobile-first*. |
-| **Componentização (Mín. 8)** | **11 componentes reutilizáveis** em `src/components/` (`Header`, `CitizenBanner`, `DistrictOverview`, `FilterBar`, `IncidentForm`, `IncidentCard`, `IncidentModal`, `StatusBadge`, `RiskIndicator`, `ToastNotification`, `Footer`). |
+| **Tailwind CSS** | Tema claro cívico acessível (`slate-50` + `blue-800`), animações SVG customizadas e layout *mobile-first*. |
+| **Componentização (Mín. 8)** | **13 módulos visuais reutilizáveis** em `src/components/` e `src/pages/` (`SplashScreen`, `LoginScreen`, `Header`, `CitizenBanner`, `DistrictOverview`, `FilterBar`, `IncidentForm`, `IncidentCard`, `IncidentModal`, `StatusBadge`, `RiskIndicator`, `ToastNotification`, `Footer`). |
 | **React Hooks Nativos** | Uso direto de `useState`, `useEffect`, `useCallback` e `useMemo`. |
-| **Custom Hooks (Mín. 2)** | **3 Custom Hooks** em `src/hooks/`: `useIncidents`, `useViaCep` e `useGeolocation`. |
+| **Custom Hooks (Mín. 2)** | **5 Custom Hooks** em `src/hooks/`: `useIncidents`, `useViaCep`, `useGeolocation`, `useSessao` e `useToast`. |
 | **Separação de Camadas** | Acesso a APIs isolado em `src/services/api.js` e `src/services/viaCepService.js`; regras de risco em `src/utils/riskCalculator.js`. |
 | **API Externa + CRUD Completo** | Integração dupla com **MockAPI** (`GET`, `POST`, `PUT`, `DELETE`) e **ViaCEP** (`GET` real ao digitar o CEP). |
 | **Documentação Ética de IA** | Arquivo `AI.md` completo na raiz do projeto. |
-| **Versionamento Git** | Histórico limpo com **17+ commits significativos**. |
+| **Versionamento Git** | Histórico limpo com **20+ commits significativos**. |
 
 ---
 
@@ -50,7 +55,7 @@
 1. Clone o repositório (ou extraia o ZIP):
    ```bash
    git clone <LINK_DO_REPOSITORIO_PRIVADO>
-   cd zelasp-web
+   cd "04 - Front-end Design"
    ```
 2. Instale as dependências:
    ```bash

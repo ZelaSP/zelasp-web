@@ -30,5 +30,10 @@ export function useSessao() {
     setPerfil(null);
   }, []);
 
-  return { etapa, perfil, concluirAbertura, entrar, sair };
+  const reverAbertura = useCallback(() => {
+    sessionStorage.removeItem(CHAVE_ABERTURA);
+    setAberturaVista(false);
+  }, []);
+
+  return { etapa, perfil, concluirAbertura, entrar, sair, reverAbertura };
 }
