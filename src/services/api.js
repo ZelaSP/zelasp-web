@@ -1,10 +1,14 @@
 import { SEED_INCIDENTS } from '../data/seedIncidents';
 
-const API_URL = import.meta.env.VITE_API_URL?.trim() || '';
+const DEFAULT_MOCKAPI_URL = 'https://6af20abf42c6561ced38f16e.mockapi.io/ocorrencias';
+const API_URL = import.meta.env.VITE_API_URL?.trim() || DEFAULT_MOCKAPI_URL;
 const LOCAL_STORAGE_KEY = 'zelasp_ocorrencias_v1';
 
+// Evita duplicação de seed quando o React StrictMode dispara useEffect duas vezes em dev
+let seedEmAndamento = null;
+
 /**
- * Indica se há uma URL de API externa (MockAPI) configurada nas variáveis de ambiente.
+ * Indica se há uma URL de API externa (MockAPI) configurada.
  */
 export function isRemoteApiConfigured() {
   return Boolean(API_URL);
@@ -27,6 +31,23 @@ function salvarLocal(lista) {
   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(lista));
 }
 
+async function popularBaseInicial() {
+  const criados = [];
+  for (const item of SEED_INCIDENTS) {
+    const { id, ...semId } = item;
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(semId),
+    });
+    if (response.ok) {
+      const novo = await response.json();
+      criados.push(novo);
+    }
+  }
+  return criados.length > 0 ? criados : SEED_INCIDENTS;
+}
+
 /**
  * READ — Lista todas as ocorrências da API externa (MockAPI) ou armazenamento local.
  */
@@ -35,24 +56,30 @@ export async function getIncidents() {
     return lerLocal();
   }
 
-  const response = await fetch(API_URL);
-  if (!response.ok) {
-    throw new Error(`Erro ao carregar ocorrências (${response.status})`);
-  }
-  const dados = await response.json();
-
-  // Caso a base do MockAPI esteja recém-criada e vazia, popula com ocorrências reais de SP
-  if (Array.isArray(dados) && dados.length === 0) {
-    const criados = [];
-    for (const item of SEED_INCIDENTS) {
-      const { id, ...semId } = item;
-      const novo = await createIncident(semId);
-      criados.push(novo);
+  try {
+    const response = await fetch(API_URL);
+    if (!response.ok) {
+      throw new Error(`Erro ao carregar ocorrências (${response.status})`);
     }
-    return criados;
-  }
+    const dados = await response.json();
 
-  return dados;
+    // Caso a base do MockAPI esteja recém-criada e vazia, popula uma única vez com ocorrências reais de SP
+    if (Array.isArray(dados) && dados.length === 0) {
+      if (!seedEmAndamento) {
+        seedEmAndamento = popularBaseInicial().finally(() => {
+          seedEmAndamento = null;
+        });
+      }
+      const iniciais = await seedEmAndamento;
+      salvarLocal(iniciais);
+      return iniciais;
+    }
+
+    salvarLocal(dados);
+    return dados;
+  } catch {
+    return lerLocal();
+  }
 }
 
 /**
