@@ -49,14 +49,20 @@
 * **Resposta obtida:**  
   A ferramenta estruturou os avisos de emergência de fiação caída de forma acessível, diferenciou os textos do painel do morador e da central da prefeitura, e organizou as tabelas de requisitos em Markdown.
 
+### Interação 6 — Integração do Background 3D WebGL em Scrollytelling (`Three.js` + `GSAP`)
+* **Prompt enviado:**  
+  *"Integre a cena 3D Cartoon em WebGL (Five-State Diorama) como background fixo de scrollytelling na tela inicial (`SplashScreen`), mantendo intactos geometrias, materiais Toon, luzes e waypoints originais, conectando o `ScrollTrigger` ao fluxo vertical real (~480vh) com cards translúcidos (`backdrop-filter: blur(10px)`)."*
+* **Resposta obtida:**  
+  Foi criado o componente `ZelaspBackground3D.jsx` (com `three@0.128.0`, `gsap@3.12.5` e limpeza completa de WebGL/listeners no unmount do React) integrado à `SplashScreen.jsx` em 5 seções verticais alinhadas aos 5 estados da câmera.
+
 ---
 
 ## 3. Aplicação no Projeto
 
-* **Jornada em 3 Etapas (`src/pages/SplashScreen.jsx`, `LoginScreen.jsx` e `src/hooks/useSessao.js`):** Abertura animada explicando o propósito do ZelaSP, tela de login demonstrativa com escolha de perfil e painéis separados para Cidadão (relatar problema + apoiar chamado existente) e Prefeitura (monitorar GPCT + atualizar status/vistoria + excluir chamados inválidos).
+* **Jornada em 3 Etapas (`src/pages/SplashScreen.jsx`, `ZelaspBackground3D.jsx`, `LoginScreen.jsx` e `src/hooks/useSessao.js`):** Abertura interativa em 3D (*scrollytelling*) explicando o propósito do ZelaSP, tela de login demonstrativa com escolha de perfil e painéis separados para Cidadão (relatar problema + apoiar chamado existente) e Prefeitura (monitorar GPCT + atualizar status/vistoria + excluir chamados inválidos).
 * **Camada de Serviços (`src/services/api.js` e `viaCepService.js`):** Estruturação das funções `getIncidents`, `createIncident`, `updateIncident`, `deleteIncident` e `buscarEnderecoPorCep`.
 * **Custom Hooks (`src/hooks/`):** Implementação de 5 hooks personalizados (`useIncidents`, `useViaCep`, `useGeolocation`, `useSessao`, `useToast`) que desacoplam regras de negócio e efeitos colaterais da camada visual.
-* **Componentização (`src/components/` e `src/pages/`):** Desenvolvimento de 13 módulos visuais reutilizáveis com responsividade em Tailwind CSS.
+* **Componentização (`src/components/` e `src/pages/`):** Desenvolvimento de 14 módulos visuais reutilizáveis com responsividade em Tailwind CSS.
 * **Lógica de Risco (`src/utils/riskCalculator.js`):** Conexão com a regra de classificação de urgência (níveis 1 a 5) e avaliação territorial (GPCT) criada nas disciplinas de Python e Matemática.
 
 ---

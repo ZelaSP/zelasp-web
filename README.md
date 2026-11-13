@@ -21,7 +21,7 @@
 * **Cidadão Beneficiado:** Moradores, pedestres, comerciantes e pessoas com mobilidade reduzida que enfrentam riscos diários com fiação aérea rompida, bueiros abertos, buracos e entulho nas vias.
 * **Problema em uma Frase:** O canal oficial atual (SP 156) é burocrático e opaco, desestimulando relatos rápidos e gerando centenas de chamados duplicados no mesmo quarteirão durante temporais.
 * **Como Funciona (Jornada em 3 Etapas):**
-  1. **Abertura Animada Sequencial (`SplashScreen`):** Apresenta visualmente, um de cada vez, os 4 problemas urbanos do ZelaSP (fio elétrico partido, bueiro aberto, entulho na calçada e carro abandonado) sendo relatados e resolvidos, além dos 3 passos da plataforma.
+  1. **Abertura Interativa 3D (`SplashScreen` + `ZelaspBackground3D`):** Cenário WebGL *cartoon/toon* em Three.js controlado pela rolagem da página (`GSAP ScrollTrigger` em ~`480vh`), percorrendo os 4 problemas urbanos do ZelaSP (fio elétrico partido, bueiro aberto, entulho na calçada e carro abandonado) até a rua revitalizada e os 3 passos da plataforma.
   2. **Login Demonstrativo por Perfil (`LoginScreen`):** Permite escolher entrar como **Cidadão** ou como **Prefeitura**.
   3. **Painéis Conectados em Tempo Real:**
      * **Área do Cidadão:** Focada em registrar ocorrências em <15 segundos (com autopreenchimento via **ViaCEP** e **GPS**) e apoiar chamados já abertos por vizinhos (**Apoiar +1**) sem criar duplicidade.
@@ -36,8 +36,8 @@
 | Requisito Oficial | Implementação no Projeto |
 | :--- | :--- |
 | **React + Vite** | Configurado com Vite 5 e React 18 em JavaScript moderno (`ESM`). |
-| **Tailwind CSS** | Tema claro cívico acessível (`slate-50` + `blue-800`), animações SVG customizadas e layout *mobile-first*. |
-| **Componentização (Mín. 8)** | **13 módulos visuais reutilizáveis** em `src/components/` e `src/pages/` (`SplashScreen`, `LoginScreen`, `Header`, `CitizenBanner`, `DistrictOverview`, `FilterBar`, `IncidentForm`, `IncidentCard`, `IncidentModal`, `StatusBadge`, `RiskIndicator`, `ToastNotification`, `Footer`). |
+| **Tailwind CSS** | Tema claro cívico acessível (`slate-50` + `blue-800`), cards translúcidos (`backdrop-filter: blur(10px)`) sobre cena 3D em Three.js + GSAP ScrollTrigger e layout *mobile-first*. |
+| **Componentização (Mín. 8)** | **14 módulos visuais reutilizáveis** em `src/components/` e `src/pages/` (`ZelaspBackground3D`, `SplashScreen`, `LoginScreen`, `Header`, `CitizenBanner`, `DistrictOverview`, `FilterBar`, `IncidentForm`, `IncidentCard`, `IncidentModal`, `StatusBadge`, `RiskIndicator`, `ToastNotification`, `Footer`). |
 | **React Hooks Nativos** | Uso direto de `useState`, `useEffect`, `useCallback` e `useMemo`. |
 | **Custom Hooks (Mín. 2)** | **5 Custom Hooks** em `src/hooks/`: `useIncidents`, `useViaCep`, `useGeolocation`, `useSessao` e `useToast`. |
 | **Separação de Camadas** | Acesso a APIs isolado em `src/services/api.js` e `src/services/viaCepService.js`; regras de risco em `src/utils/riskCalculator.js`. |

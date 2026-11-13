@@ -1,5 +1,18 @@
-import { useState, useEffect } from 'react';
-import { Camera, ThumbsUp, Wrench, ArrowRight, CheckCircle2, RotateCcw } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import {
+  Camera,
+  ThumbsUp,
+  Wrench,
+  ArrowRight,
+  CheckCircle2,
+  RotateCcw,
+  ArrowDown,
+  Zap,
+  AlertTriangle,
+  Construction,
+  Car,
+} from 'lucide-react';
+import { ZelaspBackground3D } from '../components/ZelaspBackground3D';
 
 const PASSOS = [
   {
@@ -23,628 +36,337 @@ const CENAS = [
   {
     id: 'fio',
     rotulo: '1. Fio elétrico partido',
+    tituloCurto: '1. Fio elétrico',
     detalhe: 'Cidadão relata risco na rede → Equipe religa a fiação',
-    pinoX: 210,
-    pinoY: 6,
+    subtitulo:
+      'Cabos rompidos soltam faíscas e colocam pedestres em perigo imediato. O ZelaSP classifica o risco no nível máximo logo na abertura.',
+    icone: Zap,
+    destaque: 'border-red-200/90 bg-red-50/85 text-red-900',
+    iconeCor: 'text-red-600',
   },
   {
     id: 'bueiro',
     rotulo: '2. Bueiro aberto',
+    tituloCurto: '2. Bueiro',
     detalhe: 'Bueiro sem tampa na via → Subprefeitura sela a tampa',
-    pinoX: 210,
-    pinoY: 78,
+    subtitulo:
+      'Tampas furtadas ou quebradas representam risco grave de queda para idosos, crianças e pessoas com deficiência.',
+    icone: AlertTriangle,
+    destaque: 'border-amber-200/90 bg-amber-50/85 text-amber-900',
+    iconeCor: 'text-amber-600',
   },
   {
     id: 'entulho',
     rotulo: '3. Entulho na calçada',
+    tituloCurto: '3. Entulho',
     detalhe: 'Descarte irregular bloqueando passeio → Limpeza urbana',
-    pinoX: 129,
-    pinoY: 58,
+    subtitulo:
+      'Restos de obra no passeio obrigam o pedestre a caminhar no asfalto entre veículos; fotos e apoios aceleram a remoção.',
+    icone: Construction,
+    destaque: 'border-amber-200/90 bg-amber-50/85 text-amber-900',
+    iconeCor: 'text-amber-700',
   },
   {
     id: 'carro',
     rotulo: '4. Carro abandonado',
+    tituloCurto: '4. Carro',
     detalhe: 'Carcaça abandonada na rua → Remoção e via liberada',
-    pinoX: 294,
-    pinoY: 60,
+    subtitulo:
+      'Veículos abandonados acumulam água parada, comprometem o escoamento da via e podem voltar ao radar público com um relato.',
+    icone: Car,
+    destaque: 'border-blue-200/90 bg-blue-50/85 text-blue-900',
+    iconeCor: 'text-blue-700',
   },
 ];
 
-const DURACAO_ETAPA_MS = 3000;
+const ETAPAS_NAV = [
+  ...CENAS.map((c) => ({ id: c.id, label: c.tituloCurto })),
+  { id: 'revitalizada', label: '5. Rua revitalizada' },
+];
 
 export function SplashScreen({ onConcluir }) {
-  // etapa: 0 = Fio, 1 = Bueiro, 2 = Entulho, 3 = Carro, 4 = Todos resolvidos
-  const [etapa, setEtapa] = useState(0);
-  const [cicloKey, setCicloKey] = useState(0);
+  const homeRef = useRef(null);
+  const secaoRefs = useRef([]);
+  const [etapaAtiva, setEtapaAtiva] = useState(0);
 
   useEffect(() => {
-    if (etapa >= CENAS.length) return undefined;
-    const timer = setTimeout(() => {
-      setEtapa((anterior) => anterior + 1);
-    }, DURACAO_ETAPA_MS);
-    return () => clearTimeout(timer);
-  }, [etapa, cicloKey]);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
 
-  const selecionarCena = (indice) => {
-    setEtapa(indice);
-    setCicloKey((k) => k + 1);
+  const handleConcluir = () => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    onConcluir();
   };
 
-  const reiniciarSequencia = () => {
-    setEtapa(0);
-    setCicloKey((k) => k + 1);
+  const irParaEtapa = (indice) => {
+    if (indice === 0) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (indice === ETAPAS_NAV.length - 1) {
+      const fimDaPagina =
+        document.documentElement.scrollHeight - window.innerHeight;
+      window.scrollTo({ top: Math.max(0, fimDaPagina), behavior: 'smooth' });
+      return;
+    }
+    const alvo = secaoRefs.current[indice];
+    if (alvo) {
+      alvo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   };
-
-  const cenaAtual = CENAS[etapa] || null;
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4 py-10">
-      <button
-        type="button"
-        onClick={onConcluir}
-        className="absolute right-4 top-4 rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-500 hover:bg-slate-200/60 hover:text-slate-800"
-      >
-        Pular
-      </button>
+    <div ref={homeRef} className="zelasp-home-root relative w-full">
+      {/* Canvas WebGL 3D fixo em tela cheia controlado pela rolagem */}
+      <ZelaspBackground3D triggerRef={homeRef} onStageChange={setEtapaAtiva} />
 
-      <div className="w-full max-w-2xl text-center">
-        {/* Indicador do problema que está acontecendo na vez */}
-        <div className="mb-2 flex min-h-[28px] items-center justify-center">
-          {cenaAtual ? (
-            <span
-              key={`status-${etapa}-${cicloKey}`}
-              className="zs-surgir inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3.5 py-1 text-xs font-semibold text-amber-900"
-            >
-              <span className="h-2 w-2 animate-pulse rounded-full bg-amber-600" />
-              {cenaAtual.detalhe}
-            </span>
-          ) : (
-            <span className=" zs-surgir inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3.5 py-1 text-xs font-semibold text-emerald-800">
-              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-              4 ocorrências relatadas e resolvidas na vizinhança!
-              <button
-                type="button"
-                onClick={reiniciarSequencia}
-                className="ml-1 inline-flex items-center gap-1 underline hover:text-emerald-950"
-              >
-                <RotateCcw className="h-3 w-3" />
-                Repetir
-              </button>
-            </span>
-          )}
-        </div>
-
-        <svg
-          viewBox="0 0 420 190"
-          className="mx-auto w-full max-w-lg"
-          role="img"
-          aria-label="Ilustração passo a passo: fio rompido, bueiro aberto, entulho na calçada e carro abandonado são relatados e resolvidos um de cada vez, finalizando com a rua de São Paulo revitalizada"
+      {/* Barra superior translúcida com navegação rápida pelos 5 estados 3D */}
+      <header className="pointer-events-none fixed inset-x-0 top-0 z-20 px-4 py-3 sm:px-6">
+        <nav
+          aria-label="Etapas da cena inicial"
+          className="zelasp-glass pointer-events-auto mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-2xl border border-slate-200/80 px-3.5 py-2 shadow-sm"
         >
-          <defs>
-            <linearGradient id="zsCeuFinal" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#eff6ff" />
-              <stop offset="100%" stopColor="#ecfdf5" />
-            </linearGradient>
-            <radialGradient id="zsHaloLuz" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#fde047" stopOpacity="0.85" />
-              <stop offset="100%" stopColor="#fde047" stopOpacity="0" />
-            </radialGradient>
-          </defs>
-
-          {/* ==========================================================
-              CAPA FINAL (etapa === 4): CENÁRIO "RUA DE SP REVITALIZADA"
-             ========================================================== */}
-          {etapa >= CENAS.length && (
-            <g className="zs-cena-final">
-              {/* Céu suave de fundo da capa */}
-              <rect
-                x="10"
-                y="6"
-                width="400"
-                height="174"
-                rx="16"
-                fill="url(#zsCeuFinal)"
-                stroke="#bfdbfe"
-                strokeWidth="1.5"
-              />
-
-              {/* Faixa de asfalto limpo na base */}
-              <path
-                d="M11 142 H409 V164 C409 172 402 179 394 179 H26 C18 179 11 172 11 164 Z"
-                fill="#f1f5f9"
-              />
-
-              {/* Silhueta de prédios de São Paulo ao fundo */}
-              {/* Prédio 1 (esquerda) */}
-              <rect x="26" y="74" width="36" height="68" rx="2" fill="#dbeafe" />
-              <rect x="32" y="82" width="6" height="6" rx="1" fill="#ffffff" />
-              <rect x="42" y="82" width="6" height="6" rx="1" fill="#fef08a" />
-              <rect x="32" y="94" width="6" height="6" rx="1" fill="#ffffff" />
-              <rect x="42" y="94" width="6" height="6" rx="1" fill="#ffffff" />
-              <rect x="32" y="106" width="6" height="6" rx="1" fill="#fef08a" />
-              <rect x="42" y="106" width="6" height="6" rx="1" fill="#ffffff" />
-
-              {/* Prédio 2 (centro-esquerda) */}
-              <rect x="148" y="56" width="44" height="86" rx="3" fill="#cbd5e1" />
-              <rect x="155" y="64" width="7" height="7" rx="1" fill="#fef08a" />
-              <rect x="167" y="64" width="7" height="7" rx="1" fill="#ffffff" />
-              <rect x="179" y="64" width="7" height="7" rx="1" fill="#ffffff" />
-              <rect x="155" y="77" width="7" height="7" rx="1" fill="#ffffff" />
-              <rect x="167" y="77" width="7" height="7" rx="1" fill="#fef08a" />
-              <rect x="179" y="77" width="7" height="7" rx="1" fill="#ffffff" />
-              <rect x="155" y="90" width="7" height="7" rx="1" fill="#ffffff" />
-              <rect x="167" y="90" width="7" height="7" rx="1" fill="#ffffff" />
-              <rect x="179" y="90" width="7" height="7" rx="1" fill="#fef08a" />
-              <rect x="155" y="103" width="7" height="7" rx="1" fill="#fef08a" />
-              <rect x="167" y="103" width="7" height="7" rx="1" fill="#ffffff" />
-              <rect x="179" y="103" width="7" height="7" rx="1" fill="#ffffff" />
-
-              {/* Prédio 3 (centro-direita) */}
-              <rect x="228" y="66" width="46" height="76" rx="3" fill="#dbeafe" />
-              <rect x="236" y="75" width="7" height="7" rx="1" fill="#ffffff" />
-              <rect x="248" y="75" width="7" height="7" rx="1" fill="#fef08a" />
-              <rect x="260" y="75" width="7" height="7" rx="1" fill="#ffffff" />
-              <rect x="236" y="88" width="7" height="7" rx="1" fill="#fef08a" />
-              <rect x="248" y="88" width="7" height="7" rx="1" fill="#ffffff" />
-              <rect x="260" y="88" width="7" height="7" rx="1" fill="#ffffff" />
-              <rect x="236" y="101" width="7" height="7" rx="1" fill="#ffffff" />
-              <rect x="248" y="101" width="7" height="7" rx="1" fill="#fef08a" />
-              <rect x="260" y="101" width="7" height="7" rx="1" fill="#ffffff" />
-
-              {/* Prédio 4 (direita) */}
-              <rect x="358" y="78" width="36" height="64" rx="2" fill="#cbd5e1" />
-              <rect x="365" y="86" width="6" height="6" rx="1" fill="#fef08a" />
-              <rect x="376" y="86" width="6" height="6" rx="1" fill="#ffffff" />
-              <rect x="365" y="98" width="6" height="6" rx="1" fill="#ffffff" />
-              <rect x="376" y="98" width="6" height="6" rx="1" fill="#fef08a" />
-              <rect x="365" y="110" width="6" height="6" rx="1" fill="#ffffff" />
-              <rect x="376" y="110" width="6" height="6" rx="1" fill="#ffffff" />
-
-              {/* Árvore 1 na calçada esquerda (onde antes havia entulho) */}
-              <rect x="116" y="118" width="5" height="24" rx="2" fill="#78716c" />
-              <circle cx="118.5" cy="108" r="15" fill="#10b981" />
-              <circle cx="110" cy="113" r="11" fill="#059669" />
-              <circle cx="127" cy="113" r="11" fill="#34d399" />
-
-              {/* Árvore 2 na calçada direita (onde antes havia o carro abandonado) */}
-              <rect x="300" y="118" width="5" height="24" rx="2" fill="#78716c" />
-              <circle cx="302.5" cy="108" r="15" fill="#10b981" />
-              <circle cx="294" cy="113" r="11" fill="#34d399" />
-              <circle cx="311" cy="113" r="11" fill="#059669" />
-
-              {/* Halos de luz acesa nos dois postes */}
-              <g className="zs-luz-poste">
-                <circle cx="75" cy="38" r="22" fill="url(#zsHaloLuz)" />
-                <circle cx="75" cy="38" r="5.5" fill="#facc15" stroke="#ca8a04" strokeWidth="1.5" />
-                <circle cx="345" cy="38" r="22" fill="url(#zsHaloLuz)" />
-                <circle cx="345" cy="38" r="5.5" fill="#facc15" stroke="#ca8a04" strokeWidth="1.5" />
-              </g>
-
-              {/* Selo Central de Capa no Topo da Cena */}
-              <rect
-                x="118"
-                y="16"
-                width="184"
-                height="26"
-                rx="13"
-                fill="#065f46"
-                stroke="#a7f3d0"
-                strokeWidth="1.5"
-              />
-              <circle cx="134" cy="29" r="6" fill="#10b981" />
-              <path
-                d="M131.5 29 L133.5 31 L137 27"
-                fill="none"
-                stroke="#ffffff"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <text
-                x="216"
-                y="32.5"
-                textAnchor="middle"
-                fill="#ffffff"
-                fontSize="9.5"
-                fontWeight="700"
-                letterSpacing="0.4"
-              >
-                RUA REVITALIZADA • ZELASP
-              </text>
-            </g>
-          )}
-
-          {/* Linha da calçada (meio-fio) */}
-          <line
-            x1="15"
-            y1="142"
-            x2="405"
-            y2="142"
-            pathLength="1"
-            className="zs-draw"
-            stroke="#94a3b8"
-            strokeWidth="3"
-            strokeLinecap="round"
-          />
-
-          {/* Faixa da rua / asfalto */}
-          <line
-            x1="15"
-            y1="168"
-            x2="405"
-            y2="168"
-            pathLength="1"
-            className="zs-draw"
-            stroke="#cbd5e1"
-            strokeWidth="2"
-            strokeDasharray="6 6"
-            strokeLinecap="round"
-          />
-
-          {/* Postes de energia (esquerda e direita) */}
-          <path
-            d="M75 142 V38 M61 44 H89"
-            pathLength="1"
-            className="zs-draw zs-atraso-1"
-            stroke="#334155"
-            strokeWidth="5"
-            strokeLinecap="round"
-            fill="none"
-          />
-          <path
-            d="M345 142 V38 M331 44 H359"
-            pathLength="1"
-            className="zs-draw zs-atraso-1"
-            stroke="#334155"
-            strokeWidth="5"
-            strokeLinecap="round"
-            fill="none"
-          />
-
-          {/* ==========================================================
-              ETAPA 0: FIO ELÉTRICO PARTIDO (acontece primeiro)
-             ========================================================== */}
-          {etapa === 0 && (
-            <g key={`fio-${cicloKey}`}>
-              <g className="zs-ato-problema">
-                <g className="zs-balanca-esq">
-                  <path
-                    d="M89 44 Q125 68 144 106"
-                    stroke="#d97706"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    fill="none"
-                  />
-                  <circle cx="144" cy="106" r="4" fill="#fbbf24" className="zs-faisca" />
-                </g>
-                <g className="zs-balanca-dir">
-                  <path
-                    d="M331 44 Q296 66 276 102"
-                    stroke="#d97706"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    fill="none"
-                  />
-                  <circle cx="276" cy="102" r="4" fill="#fbbf24" className="zs-faisca" />
-                </g>
-              </g>
-              <path
-                d="M89 44 Q210 82 331 44"
-                pathLength="1"
-                className="zs-ato-reparo"
-                stroke="#059669"
-                strokeWidth="3.2"
-                strokeLinecap="round"
-                fill="none"
-              />
-            </g>
-          )}
-          {etapa > 0 && (
-            <path
-              d="M89 44 Q210 82 331 44"
-              stroke="#059669"
-              strokeWidth="3.2"
-              strokeLinecap="round"
-              fill="none"
+          <div className="flex items-center gap-2.5">
+            <img
+              src="/zelasp-logo.jpg"
+              alt="Logo ZelaSP"
+              className="h-8 w-8 rounded-lg border border-slate-200 object-cover"
             />
-          )}
+            <span className="text-sm font-extrabold tracking-tight text-slate-900 sm:text-base">
+              ZelaSP
+            </span>
+          </div>
 
-          {/* ==========================================================
-              ETAPA 1: BUEIRO ABERTO NA RUA (acontece em segundo)
-             ========================================================== */}
-          {etapa === 1 && (
-            <g key={`bueiro-${cicloKey}`}>
-              <g className="zs-ato-problema">
-                <ellipse
-                  cx="176"
-                  cy="158"
-                  rx="14"
-                  ry="4.5"
-                  fill="#64748b"
-                  stroke="#334155"
-                  strokeWidth="1.5"
-                />
-                <ellipse
-                  cx="210"
-                  cy="156"
-                  rx="22"
-                  ry="6.5"
-                  fill="#0f172a"
-                  stroke="#dc2626"
-                  strokeWidth="2"
-                />
-                <line x1="202" y1="146" x2="200" y2="138" stroke="#dc2626" strokeWidth="2" strokeLinecap="round" />
-                <line x1="210" y1="145" x2="210" y2="136" stroke="#dc2626" strokeWidth="2" strokeLinecap="round" />
-                <line x1="218" y1="146" x2="220" y2="138" stroke="#dc2626" strokeWidth="2" strokeLinecap="round" />
-                <text
-                  x="210"
-                  y="131"
-                  textAnchor="middle"
-                  fill="#dc2626"
-                  fontSize="8.5"
-                  fontWeight="700"
+          <div className="hidden items-center gap-1.5 md:flex">
+            {ETAPAS_NAV.map((item, idx) => {
+              const ativa = etapaAtiva === idx;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => irParaEtapa(idx)}
+                  className={`rounded-full px-2.5 py-1 text-[11px] font-semibold transition ${
+                    ativa
+                      ? idx === ETAPAS_NAV.length - 1
+                        ? 'bg-emerald-700 text-white shadow-sm'
+                        : 'bg-blue-800 text-white shadow-sm'
+                      : 'text-slate-600 hover:bg-white/80 hover:text-slate-900'
+                  }`}
                 >
-                  BUEIRO ABERTO
-                </text>
-              </g>
-              <g className="zs-ato-tampa">
-                <ellipse
-                  cx="210"
-                  cy="156"
-                  rx="22"
-                  ry="6.5"
-                  fill="#10b981"
-                  stroke="#047857"
-                  strokeWidth="2"
-                />
-                <line x1="196" y1="156" x2="224" y2="156" stroke="#064e3b" strokeWidth="1.5" strokeLinecap="round" />
-              </g>
-            </g>
-          )}
-          {etapa > 1 && (
-            <g>
-              <ellipse
-                cx="210"
-                cy="156"
-                rx="22"
-                ry="6.5"
-                fill="#10b981"
-                stroke="#047857"
-                strokeWidth="2"
-              />
-              <line x1="196" y1="156" x2="224" y2="156" stroke="#064e3b" strokeWidth="1.5" strokeLinecap="round" />
-            </g>
-          )}
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
 
-          {/* ==========================================================
-              ETAPA 2: ENTULHO NA CALÇADA (acontece em terceiro)
-             ========================================================== */}
-          {etapa === 2 && (
-            <g key={`entulho-${cicloKey}`}>
-              <g className="zs-ato-problema">
-                <path
-                  d="M98 142 Q114 122 132 128 Q146 118 160 142 Z"
-                  fill="#d6d3d1"
-                  stroke="#78716c"
-                  strokeWidth="2"
-                  strokeLinejoin="round"
-                />
-                <rect
-                  x="108"
-                  y="129"
-                  width="14"
-                  height="8"
-                  rx="1.5"
-                  transform="rotate(-14 108 129)"
-                  fill="#ea580c"
-                />
-                <rect
-                  x="128"
-                  y="126"
-                  width="15"
-                  height="8"
-                  rx="1.5"
-                  transform="rotate(18 128 126)"
-                  fill="#b45309"
-                />
-                <line
-                  x1="104"
-                  y1="122"
-                  x2="148"
-                  y2="138"
-                  stroke="#92400e"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                />
-                <text
-                  x="129"
-                  y="115"
-                  textAnchor="middle"
-                  fill="#b45309"
-                  fontSize="8.5"
-                  fontWeight="700"
-                >
-                  ENTULHO
-                </text>
-              </g>
-              <g className="zs-ato-check">
-                <circle cx="129" cy="130" r="8" fill="#d1fae5" stroke="#059669" strokeWidth="1.8" />
-                <path
-                  d="M125.5 130 L128 132.5 L133 127.5"
-                  fill="none"
-                  stroke="#059669"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </g>
-            </g>
-          )}
-          {etapa === 3 && (
-            <g>
-              <circle cx="129" cy="130" r="8" fill="#d1fae5" stroke="#059669" strokeWidth="1.8" />
-              <path
-                d="M125.5 130 L128 132.5 L133 127.5"
-                fill="none"
-                stroke="#059669"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </g>
-          )}
+          <button
+            type="button"
+            onClick={handleConcluir}
+            className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white/85 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-white hover:text-slate-900"
+          >
+            <span>Pular</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </button>
+        </nav>
+      </header>
 
-          {/* ==========================================================
-              ETAPA 3: CARRO ABANDONADO NA RUA (acontece em quarto)
-             ========================================================== */}
-          {etapa === 3 && (
-            <g key={`carro-${cicloKey}`}>
-              <g className="zs-ato-carro">
-                <g transform="rotate(4 294 146)">
-                  <path
-                    d="M262 150 L267 138 L279 130 L306 130 L316 139 L326 141 L326 150 Z"
-                    fill="#cbd5e1"
-                    stroke="#64748b"
-                    strokeWidth="2"
-                    strokeLinejoin="round"
-                  />
-                  <path d="M280 133 H303 L310 139 H272 Z" fill="#f8fafc" stroke="#64748b" strokeWidth="1.3" />
-                  <line x1="286" y1="133" x2="292" y2="139" stroke="#dc2626" strokeWidth="1.3" />
-                  <circle cx="278" cy="145" r="2.5" fill="#b45309" opacity="0.7" />
-                  <circle cx="308" cy="144" r="3" fill="#b45309" opacity="0.7" />
-                  <circle cx="274" cy="151" r="5.5" fill="#334155" />
-                  <ellipse cx="313" cy="152" rx="6" ry="3.2" fill="#334155" />
-                </g>
-                <text
-                  x="294"
-                  y="121"
-                  textAnchor="middle"
-                  fill="#64748b"
-                  fontSize="8.5"
-                  fontWeight="700"
-                >
-                  ABANDONADO
-                </text>
-              </g>
-              <g className="zs-ato-check">
-                <circle cx="294" cy="142" r="8" fill="#d1fae5" stroke="#059669" strokeWidth="1.8" />
-                <path
-                  d="M290.5 142 L293 144.5 L298 139.5"
-                  fill="none"
-                  stroke="#059669"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </g>
-            </g>
-          )}
-
-          {/* Pino de geolocalização do ZelaSP que desce exatamente sobre o problema da vez */}
-          {cenaAtual && (
-            <g
-              key={`pino-${etapa}-${cicloKey}`}
-              transform={`translate(${cenaAtual.pinoX}, ${cenaAtual.pinoY})`}
-            >
-              <circle
-                cx="0"
-                cy="26"
-                r="15"
-                fill="none"
-                stroke="#3b82f6"
-                strokeWidth="2"
-                className="zs-ato-onda"
-              />
-              <g className="zs-ato-pino">
-                <path
-                  d="M0 0 c-10 0 -18 8 -18 18 c0 13 18 30 18 30 s18 -17 18 -30 c0 -10 -8 -18 -18 -18z"
-                  fill="#1e40af"
-                />
-                <circle cx="0" cy="18" r="6" fill="#ffffff" />
-              </g>
-            </g>
-          )}
-        </svg>
-
-        {/* Etiquetas sequenciais das 4 ocorrências (clicáveis para rever qualquer uma) */}
-        <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
-          {CENAS.map((cena, idx) => {
-            const concluida = etapa > idx;
-            const emAndamento = etapa === idx;
-            return (
-              <button
-                key={cena.id}
-                type="button"
-                onClick={() => selecionarCena(idx)}
-                className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold transition-all ${
-                  concluida
-                    ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
-                    : emAndamento
-                      ? 'border-blue-600 bg-blue-50 text-blue-900 ring-2 ring-blue-500/20'
-                      : 'border-slate-200 bg-white text-slate-400 hover:border-slate-300 hover:text-slate-600'
-                }`}
-              >
-                {concluida ? (
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                ) : emAndamento ? (
-                  <span className="h-2 w-2 animate-ping rounded-full bg-blue-600" />
-                ) : (
-                  <span className="h-2 w-2 rounded-full bg-slate-300" />
-                )}
-                {cena.rotulo}
-              </button>
-            );
-          })}
-        </div>
-
-        <div
-          className="zs-surgir mt-5 flex items-center justify-center gap-3"
-          style={{ animationDelay: '0.4s' }}
+      {/* Conteúdo real da Home (~480vh) sincronizado com os 5 waypoints da câmera 3D */}
+      <main className="zelasp-home-main mx-auto w-full max-w-6xl px-4 sm:px-6">
+        {/* ESTADO 1 (0% - 20%): Hero + Fio Elétrico Partido */}
+        <section
+          ref={(el) => {
+            secaoRefs.current[0] = el;
+          }}
+          className="zelasp-home-section flex min-h-[95vh] flex-col justify-between pt-20 pb-12 sm:pt-24"
+          aria-labelledby="titulo-home-zelasp"
         >
-          <img
-            src="/zelasp-logo.jpg"
-            alt=""
-            className="h-12 w-12 rounded-xl border border-slate-200 object-cover shadow-sm"
-          />
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-            ZelaSP
-          </h1>
-        </div>
-
-        <p
-          className="zs-surgir mx-auto mt-3 max-w-xl text-base text-slate-600 sm:text-lg"
-          style={{ animationDelay: '0.6s' }}
-        >
-          Fio caído, bueiro aberto, entulho na calçada ou carro abandonado: a vizinhança
-          avisa, a prefeitura resolve e todo mundo acompanha.
-        </p>
-
-        <ul className="mt-7 grid gap-3 text-left sm:grid-cols-3">
-          {PASSOS.map(({ icone: Icone, titulo, texto }, i) => (
-            <li
-              key={titulo}
-              className="zs-surgir rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
-              style={{ animationDelay: `${0.8 + i * 0.2}s` }}
-            >
-              <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-800">
-                <Icone className="h-5 w-5" />
+          <div className="zelasp-glass zs-surgir max-w-md rounded-2xl border border-slate-200/80 p-5 shadow-md sm:p-6">
+            <div className="flex items-center gap-3">
+              <img
+                src="/zelasp-logo.jpg"
+                alt=""
+                className="h-11 w-11 rounded-xl border border-slate-200 object-cover shadow-sm"
+              />
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-wider text-blue-800">
+                  Zeladoria Cidadã Inteligente · SP
+                </p>
+                <h1
+                  id="titulo-home-zelasp"
+                  className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl"
+                >
+                  ZelaSP
+                </h1>
               </div>
-              <p className="text-sm font-bold text-slate-900">{titulo}</p>
-              <p className="mt-1 text-xs leading-relaxed text-slate-600">{texto}</p>
-            </li>
-          ))}
-        </ul>
+            </div>
 
-        <button
-          type="button"
-          onClick={onConcluir}
-          className="zs-surgir mt-7 inline-flex items-center gap-2 rounded-lg bg-blue-800 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-900"
-          style={{ animationDelay: '1.4s' }}
+            <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              Fio caído, bueiro aberto, entulho na calçada ou carro abandonado: a vizinhança
+              avisa, a prefeitura resolve e todo mundo acompanha.
+            </p>
+
+            <div className="mt-4 flex flex-wrap items-center gap-2.5">
+              <button
+                type="button"
+                onClick={handleConcluir}
+                className="inline-flex items-center gap-2 rounded-lg bg-blue-800 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-900"
+              >
+                <span>Começar</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => irParaEtapa(1)}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white/85 px-3.5 py-2.5 text-xs font-semibold text-slate-700 transition hover:bg-white"
+              >
+                <span>Explorar os 4 cenários</span>
+                <ArrowDown className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </div>
+
+          <article className="zelasp-glass mt-10 max-w-md rounded-2xl border border-slate-200/80 p-4 shadow-md sm:p-5">
+            <div className="flex items-center justify-between gap-2">
+              <span
+                className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold ${CENAS[0].destaque}`}
+              >
+                <Zap className={`h-3.5 w-3.5 ${CENAS[0].iconeCor}`} />
+                {CENAS[0].rotulo}
+              </span>
+              <span className="font-mono text-[11px] font-semibold text-slate-500">01 / 05</span>
+            </div>
+            <p className="mt-2.5 text-sm font-bold text-slate-900">{CENAS[0].detalhe}</p>
+            <p className="mt-1 text-xs leading-relaxed text-slate-600">{CENAS[0].subtitulo}</p>
+          </article>
+        </section>
+
+        {/* ESTADO 2 (20% - 40%): Bueiro Aberto */}
+        <section
+          ref={(el) => {
+            secaoRefs.current[1] = el;
+          }}
+          className="zelasp-home-section flex min-h-[95vh] items-center justify-end py-20"
+          aria-label={CENAS[1].rotulo}
         >
-          Começar
-          <ArrowRight className="h-4 w-4" />
-        </button>
-      </div>
+          <article className="zelasp-glass max-w-sm rounded-2xl border border-slate-200/80 p-5 shadow-md">
+            <div className="flex items-center justify-between gap-2">
+              <span
+                className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold ${CENAS[1].destaque}`}
+              >
+                <AlertTriangle className={`h-3.5 w-3.5 ${CENAS[1].iconeCor}`} />
+                {CENAS[1].rotulo}
+              </span>
+              <span className="font-mono text-[11px] font-semibold text-slate-500">02 / 05</span>
+            </div>
+            <h2 className="mt-3 text-base font-bold text-slate-900 sm:text-lg">{CENAS[1].detalhe}</h2>
+            <p className="mt-1.5 text-xs leading-relaxed text-slate-600 sm:text-sm">
+              {CENAS[1].subtitulo}
+            </p>
+          </article>
+        </section>
+
+        {/* ESTADO 3 (40% - 60%): Entulho na Calçada */}
+        <section
+          ref={(el) => {
+            secaoRefs.current[2] = el;
+          }}
+          className="zelasp-home-section flex min-h-[95vh] items-end justify-start pb-20 pt-24"
+          aria-label={CENAS[2].rotulo}
+        >
+          <article className="zelasp-glass max-w-sm rounded-2xl border border-slate-200/80 p-5 shadow-md">
+            <div className="flex items-center justify-between gap-2">
+              <span
+                className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold ${CENAS[2].destaque}`}
+              >
+                <Construction className={`h-3.5 w-3.5 ${CENAS[2].iconeCor}`} />
+                {CENAS[2].rotulo}
+              </span>
+              <span className="font-mono text-[11px] font-semibold text-slate-500">03 / 05</span>
+            </div>
+            <h2 className="mt-3 text-base font-bold text-slate-900 sm:text-lg">{CENAS[2].detalhe}</h2>
+            <p className="mt-1.5 text-xs leading-relaxed text-slate-600 sm:text-sm">
+              {CENAS[2].subtitulo}
+            </p>
+          </article>
+        </section>
+
+        {/* ESTADO 4 (60% - 80%): Carro Abandonado */}
+        <section
+          ref={(el) => {
+            secaoRefs.current[3] = el;
+          }}
+          className="zelasp-home-section flex min-h-[95vh] items-center justify-start py-20"
+          aria-label={CENAS[3].rotulo}
+        >
+          <article className="zelasp-glass max-w-sm rounded-2xl border border-slate-200/80 p-5 shadow-md">
+            <div className="flex items-center justify-between gap-2">
+              <span
+                className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold ${CENAS[3].destaque}`}
+              >
+                <Car className={`h-3.5 w-3.5 ${CENAS[3].iconeCor}`} />
+                {CENAS[3].rotulo}
+              </span>
+              <span className="font-mono text-[11px] font-semibold text-slate-500">04 / 05</span>
+            </div>
+            <h2 className="mt-3 text-base font-bold text-slate-900 sm:text-lg">{CENAS[3].detalhe}</h2>
+            <p className="mt-1.5 text-xs leading-relaxed text-slate-600 sm:text-sm">
+              {CENAS[3].subtitulo}
+            </p>
+          </article>
+        </section>
+
+        {/* ESTADO 5 (80% - 100%): Rua de SP Revitalizada + 3 Passos + Começar */}
+        <section
+          ref={(el) => {
+            secaoRefs.current[4] = el;
+          }}
+          className="zelasp-home-section flex min-h-[100vh] flex-col justify-end pt-24 pb-8 sm:pb-10"
+          aria-label="Rua de São Paulo revitalizada"
+        >
+          <div className="mx-auto w-full max-w-3xl text-center">
+            <div className="zelasp-glass inline-flex items-center gap-2 rounded-full border border-emerald-200 px-3.5 py-1 text-xs font-semibold text-emerald-900 shadow-sm">
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+              <span>4 ocorrências relatadas e resolvidas na vizinhança!</span>
+            </div>
+
+            <ul className="mt-3 grid gap-2.5 text-left sm:grid-cols-3">
+              {PASSOS.map(({ icone: Icone, titulo, texto }) => (
+                <li
+                  key={titulo}
+                  className="zelasp-glass rounded-xl border border-slate-200/80 p-3.5 shadow-sm"
+                >
+                  <div className="mb-1.5 flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-800">
+                    <Icone className="h-4 w-4" />
+                  </div>
+                  <p className="text-sm font-bold text-slate-900">{titulo}</p>
+                  <p className="mt-1 text-xs leading-relaxed text-slate-600">{texto}</p>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
+              <button
+                type="button"
+                onClick={handleConcluir}
+                className="inline-flex items-center gap-2 rounded-lg bg-blue-800 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-blue-900"
+              >
+                <span>Começar</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => irParaEtapa(0)}
+                className="zelasp-glass inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-4 py-2.5 text-xs font-semibold text-slate-700 transition hover:bg-white"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                <span>Rever do início</span>
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
   );
 }

@@ -3,7 +3,14 @@
 @tailwind utilities;
 
 @layer base {
-  html {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background: transparent;
+    overflow-x: hidden;
+    overscroll-behavior-y: none;
     scroll-behavior: smooth;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
@@ -15,221 +22,37 @@
   }
 }
 
-/* Animação de abertura sequencial (1 problema por vez -> relato -> reparo) */
-.zs-draw {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  animation: zs-draw 0.6s ease-out forwards;
+/* Canvas WebGL 3D fixo ao fundo da tela inicial */
+#zelasp-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  display: block;
 }
 
-.zs-atraso-1 {
-  animation-delay: 0.2s;
+/* Wrappers e seções transparentes sobre o cenário 3D */
+.zelasp-home-root,
+.zelasp-home-main,
+.zelasp-home-section {
+  position: relative;
+  z-index: 1;
+  background: transparent;
 }
 
-/* Problema ativo na etapa atual (3.0s por etapa): surge em 0s e some no reparo em 1.95s */
-.zs-ato-problema {
-  opacity: 0;
-  animation: zs-ato-problema 2.9s ease forwards;
-}
-
-.zs-ato-carro {
-  opacity: 0;
-  animation: zs-ato-carro 2.9s ease forwards;
-}
-
-.zs-balanca-esq {
-  transform-origin: 75px 44px;
-  animation: zs-balanca 0.75s ease-in-out 0.15s 2 alternate both;
-}
-
-.zs-balanca-dir {
-  transform-origin: 345px 44px;
-  animation: zs-balanca 0.75s ease-in-out 0.25s 2 alternate-reverse both;
-}
-
-.zs-faisca {
-  opacity: 0;
-  animation: zs-pisca 0.28s linear 0.2s 6;
-}
-
-/* Pino desce sobre o problema da etapa atual em 1.05s */
-.zs-ato-pino {
-  opacity: 0;
-  transform-box: fill-box;
-  transform-origin: center bottom;
-  animation: zs-ato-pino 2.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-.zs-ato-onda {
-  opacity: 0;
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: zs-onda 0.85s ease-out 1.35s forwards;
-}
-
-/* Solução do problema atual dispara em 1.85s */
-.zs-ato-reparo {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  animation: zs-draw 0.75s ease-out 1.85s forwards;
-}
-
-.zs-ato-tampa {
-  opacity: 0;
-  animation: zs-tampar-bueiro 0.65s cubic-bezier(0.22, 1, 0.36, 1) 1.85s forwards;
-}
-
-.zs-ato-check {
-  opacity: 0;
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: zs-check-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 2.05s forwards;
+/* Cards e barra superior translúcidos mantendo legibilidade sobre a cena 3D */
+.zelasp-glass {
+  background-color: rgba(255, 255, 255, 0.78);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 
 .zs-surgir {
   opacity: 0;
   animation: zs-surgir 0.6s ease-out forwards;
-}
-
-.zs-cena-final {
-  opacity: 0;
-  animation: zs-cena-final 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-.zs-luz-poste {
-  opacity: 0;
-  animation: zs-luz-poste 0.8s ease-out 0.25s forwards;
-}
-
-@keyframes zs-cena-final {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes zs-luz-poste {
-  from {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes zs-draw {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes zs-ato-problema {
-  0% {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  12%,
-  64% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  78%,
-  100% {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-}
-
-@keyframes zs-ato-carro {
-  0% {
-    opacity: 0;
-    transform: translateX(-8px);
-  }
-  12%,
-  64% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  82%,
-  100% {
-    opacity: 0;
-    transform: translateX(32px);
-  }
-}
-
-@keyframes zs-ato-pino {
-  0%,
-  34% {
-    opacity: 0;
-    transform: translateY(-28px);
-  }
-  48%,
-  86% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-}
-
-@keyframes zs-tampar-bueiro {
-  from {
-    opacity: 0;
-    transform: translateX(-24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes zs-check-pop {
-  from {
-    opacity: 0;
-    transform: scale(0.4);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes zs-onda {
-  0% {
-    opacity: 0.75;
-    transform: scale(0.3);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(2.6);
-  }
-}
-
-@keyframes zs-balanca {
-  from {
-    transform: rotate(-5deg);
-  }
-  to {
-    transform: rotate(5deg);
-  }
-}
-
-@keyframes zs-pisca {
-  0%,
-  100% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
 }
 
 @keyframes zs-surgir {
@@ -244,20 +67,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .zs-draw,
-  .zs-ato-reparo {
-    stroke-dashoffset: 0;
-    animation: none;
+  html {
+    scroll-behavior: auto;
   }
-  .zs-ato-problema,
-  .zs-ato-carro,
-  .zs-faisca,
-  .zs-ato-onda {
-    display: none;
-  }
-  .zs-ato-pino,
-  .zs-ato-tampa,
-  .zs-ato-check,
   .zs-surgir {
     opacity: 1;
     transform: none;
