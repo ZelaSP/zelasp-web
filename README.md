@@ -26,7 +26,7 @@
   3. **Painéis Conectados em Tempo Real:**
      * **Área do Cidadão:** Focada em registrar ocorrências em <15 segundos (com autopreenchimento via **ViaCEP** e **GPS**) e apoiar chamados já abertos por vizinhos (**Apoiar +1**) sem criar duplicidade.
      * **Painel da Prefeitura:** Focado na triagem operacional por gravidade e apoio comunitário, monitoramento do Gatilho Preditivo de Contingência Territorial (**GPCT**), atualização de parecer de vistoria/status (`PUT`) e exclusão de registros inválidos (`DELETE`).
-* **Indicador de Impacto:** Redução do tempo médio de relato para <30 segundos e eliminação de duplicidade de demandas no mesmo raio urbano.
+* **Indicador de Impacto:** Redução do tempo médio de relato para **<15 segundos**, **redução simulada de 38,5% no backlog acumulado** pós-temporal (estudo DPS) e **meta de −45% de chamados duplicados** por meio do apoio comunitário no mesmo raio urbano.
 * **ODS Conectados:** ODS 11 (Cidades e Comunidades Sustentáveis) e ODS 9 (Indústria, Inovação e Infraestrutura).
 
 ---
