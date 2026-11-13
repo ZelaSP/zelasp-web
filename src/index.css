@@ -3,16 +3,19 @@
 @tailwind utilities;
 
 @layer base {
-  html,
+  html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: clip;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
   body {
     margin: 0;
     padding: 0;
     width: 100%;
     background: transparent;
-    overflow-x: hidden;
-    overscroll-behavior-y: none;
-    scroll-behavior: smooth;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 
   /* Garante foco acessível para navegação por teclado */
@@ -67,9 +70,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
   .zs-surgir {
     opacity: 1;
     transform: none;
