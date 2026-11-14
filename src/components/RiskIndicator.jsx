@@ -3,7 +3,7 @@ import { Zap, AlertOctagon, Info } from 'lucide-react';
 export function RiskIndicator({ nivel, riscoChoque }) {
   const numNivel = Number(nivel) || 1;
 
-  if (numNivel >= 5 || riscoChoque) {
+  if (numNivel >= 5) {
     return (
       <span className="inline-flex items-center gap-1 rounded-md bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700 border border-red-200">
         {riscoChoque ? <Zap className="h-3.5 w-3.5 text-red-600" /> : <AlertOctagon className="h-3.5 w-3.5 text-red-600" />}

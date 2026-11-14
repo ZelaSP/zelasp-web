@@ -33,6 +33,7 @@ export function App() {
     resumoTerritorial,
     carregando,
     erro,
+    origemDados,
     apiRemotaAtiva,
     filtroBairro,
     setFiltroBairro,
@@ -63,7 +64,7 @@ export function App() {
   const handleCriar = async (dados) => {
     const salvo = await adicionarOcorrencia(dados);
     mostrarAviso(
-      `Ocorrência ${salvo.protocolo} registrada! Já disponível no Painel da Prefeitura.`
+      `Ocorrência ${salvo.protocolo} registrada na API! Disponível no Painel da Prefeitura.`
     );
   };
 
@@ -71,8 +72,12 @@ export function App() {
     try {
       await apoiarOcorrencia(item);
       mostrarAviso(`Apoio somado ao protocolo ${item.protocolo}.`);
-    } catch {
-      mostrarAviso('Não foi possível registrar o apoio.', 'erro');
+    } catch (err) {
+      mostrarAviso(
+        err.message || 'Não foi possível registrar o apoio: a operação não foi salva.',
+        'erro'
+      );
+      throw err;
     }
   };
 
@@ -80,8 +85,12 @@ export function App() {
     try {
       await atualizarStatusOcorrencia(item, novoStatus, notaTecnica);
       mostrarAviso(`Protocolo ${item.protocolo} atualizado pela equipe.`);
-    } catch {
-      mostrarAviso('Erro ao atualizar o chamado.', 'erro');
+    } catch (err) {
+      mostrarAviso(
+        err.message || 'Erro ao atualizar o chamado: a alteração não foi salva.',
+        'erro'
+      );
+      throw err;
     }
   };
 
@@ -111,6 +120,7 @@ export function App() {
         onAbrirFormulario={() => setFormAberto(true)}
         onAlternarPerfil={handleAlternarPerfil}
         onSair={sair}
+        origemDados={origemDados}
         apiRemotaAtiva={apiRemotaAtiva}
       />
 
@@ -135,9 +145,10 @@ export function App() {
                     Fila única ordenada por gravidade e apoio comunitário
                   </h2>
                   <p className="text-sm text-slate-600 leading-relaxed">
-                    Os relatos enviados pelos moradores no modo Cidadão chegam aqui em tempo real.
-                    Priorize riscos elétricos e chamados com mais confirmações de vizinhos, atualize
-                    o parecer de vistoria ou descarte registros inválidos.
+                    Os painéis usam dados compartilhados pela API e atualizados no carregamento;
+                    a troca de perfil na mesma aba reaproveita o estado atual. Priorize riscos
+                    elétricos e chamados com mais confirmações de vizinhos, atualize o parecer de
+                    vistoria ou descarte registros inválidos.
                   </p>
                   <div className="pt-1">
                     <button
@@ -172,7 +183,7 @@ export function App() {
                       {resumoTerritorial.totalCriticas}
                     </p>
                     <p className="text-[11px] font-medium text-amber-800 leading-tight mt-0.5">
-                      Prioridade máxima
+                      Chamados de risco alto/crítico
                     </p>
                   </div>
 
@@ -184,7 +195,7 @@ export function App() {
                       {resumoTerritorial.totalApoios}
                     </p>
                     <p className="text-[11px] font-medium text-emerald-800 leading-tight mt-0.5">
-                      Confirmações de rua
+                      Apoios registrados
                     </p>
                   </div>
                 </div>

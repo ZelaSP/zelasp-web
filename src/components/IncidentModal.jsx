@@ -30,6 +30,8 @@ export function IncidentModal({ item, onFechar, onSalvarEdicao }) {
     try {
       await onSalvarEdicao(item, status, notaTecnica.trim());
       onFechar();
+    } catch {
+      // Erro já exibido em toast; mantém modal e campos abertos para o usuário não perder o texto.
     } finally {
       setSalvando(false);
     }

@@ -4,7 +4,6 @@ import {
   createIncident,
   updateIncident,
   deleteIncident,
-  isRemoteApiConfigured,
 } from '../services/api';
 import {
   calcularPrioridade,
@@ -22,22 +21,26 @@ export function useIncidents() {
   const [ocorrencias, setOcorrencias] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
+  const [origemDados, setOrigemDados] = useState('carregando');
 
   // Estados de filtragem e busca
   const [filtroBairro, setFiltroBairro] = useState('TODOS');
   const [filtroStatus, setFiltroStatus] = useState('TODOS');
   const [termoBusca, setTermoBusca] = useState('');
 
-  const apiRemotaAtiva = isRemoteApiConfigured();
-
   const carregarDados = useCallback(async () => {
     setCarregando(true);
     setErro(null);
+    setOrigemDados('carregando');
     try {
-      const lista = await getIncidents();
+      const resultado = await getIncidents();
+      const lista = Array.isArray(resultado) ? resultado : resultado?.dados;
+      const origem = Array.isArray(resultado) ? 'local' : resultado?.origem || 'local';
       setOcorrencias(Array.isArray(lista) ? lista : []);
+      setOrigemDados(origem);
     } catch (err) {
       setErro(err.message || 'Erro ao carregar ocorrências.');
+      setOrigemDados('cache');
     } finally {
       setCarregando(false);
     }
@@ -69,9 +72,8 @@ export function useIncidents() {
         status: 'ABERTO',
         apoios: 1,
         criadoEm: gerarDataHoraSp(),
-        notaTecnica: dadosFormulario.fotoNome
-          ? `Evidência anexada: ${dadosFormulario.fotoNome}`
-          : 'Relato enviado pelo cidadão via ZelaSP Web.',
+        fotoNome: dadosFormulario.fotoNome ? String(dadosFormulario.fotoNome).trim() : '',
+        notaTecnica: '',
         coordenadas: dadosFormulario.coordenadas || null,
       };
 
@@ -84,6 +86,9 @@ export function useIncidents() {
 
   // UPDATE — Apoio Comunitário (+1 sem criar chamado duplicado)
   const apoiarOcorrencia = useCallback(async (item) => {
+    if (item.status === 'RESOLVIDO') {
+      throw new Error('Ocorrências resolvidas não recebem novos apoios.');
+    }
     const novosApoios = (Number(item.apoios) || 1) + 1;
     const novaPrioridade = calcularPrioridade(
       item.categoria,
@@ -142,10 +147,13 @@ export function useIncidents() {
         return true;
       })
       .sort((a, b) => {
-        // Prioriza abertos com maior risco e maior apoio comunitário
+        // Prioriza abertos com maior risco e, no empate, maior apoio comunitário
         if (a.status === 'RESOLVIDO' && b.status !== 'RESOLVIDO') return 1;
         if (a.status !== 'RESOLVIDO' && b.status === 'RESOLVIDO') return -1;
-        return (Number(b.nivelPrioridade) || 0) - (Number(a.nivelPrioridade) || 0);
+        const diffPrioridade =
+          (Number(b.nivelPrioridade) || 0) - (Number(a.nivelPrioridade) || 0);
+        if (diffPrioridade !== 0) return diffPrioridade;
+        return (Number(b.apoios) || 0) - (Number(a.apoios) || 0);
       });
   }, [ocorrencias, filtroBairro, filtroStatus, termoBusca]);
 
@@ -160,7 +168,8 @@ export function useIncidents() {
     resumoTerritorial,
     carregando,
     erro,
-    apiRemotaAtiva,
+    origemDados,
+    apiRemotaAtiva: origemDados === 'nuvem',
     filtroBairro,
     setFiltroBairro,
     filtroStatus,

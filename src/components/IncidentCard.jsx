@@ -26,11 +26,13 @@ export function IncidentCard({
   const ehPrefeitura = perfil === 'prefeitura';
 
   const handleApoio = async () => {
-    if (processandoApoio || apoiadoLocal) return;
+    if (processandoApoio || apoiadoLocal || item.status === 'RESOLVIDO') return;
     setProcessandoApoio(true);
     try {
       await onApoiar(item);
       setApoiadoLocal(true);
+    } catch {
+      // Erro tratado em App.jsx; mantém botão ativo sem marcar "Apoiado por você".
     } finally {
       setProcessandoApoio(false);
     }
@@ -66,6 +68,13 @@ export function IncidentCard({
         <p className="mt-2.5 text-sm leading-relaxed text-slate-600">
           {item.descricao}
         </p>
+
+        {item.fotoNome && (
+          <p className="mt-2 text-xs text-slate-500">
+            Arquivo selecionado para demonstração:{' '}
+            <strong className="font-medium text-slate-700">{item.fotoNome}</strong>
+          </p>
+        )}
 
         {item.notaTecnica && (
           <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-700">
@@ -111,10 +120,10 @@ export function IncidentCard({
           <div className="flex flex-wrap items-center gap-2">
             <span
               className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-1 text-[11px] font-semibold text-slate-700"
-              title="Quantidade de moradores que confirmaram este mesmo problema"
+              title="Contador demonstrativo de apoios somados a este chamado"
             >
               <Users className="h-3 w-3 text-slate-500" />
-              {item.apoios || 1} {Number(item.apoios || 1) === 1 ? 'morador' : 'moradores'}
+              {item.apoios || 1} {Number(item.apoios || 1) === 1 ? 'apoio' : 'apoios'}
             </span>
 
             {/* UPDATE: Modal de status / vistoria */}

@@ -6,11 +6,11 @@ export function CitizenBanner({ resumo, onAbrirFormulario }) {
       <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="max-w-2xl space-y-3">
           <div className="inline-flex items-center gap-2 rounded-md bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-800 border border-blue-100">
-            <span>Monitoramento Comunitário · Jabaquara, Vila Mariana, Saúde, Bela Vista e Mooca</span>
+            <span>Monitoramento Comunitário · Jabaquara, Vila Mariana, Saúde, Bela Vista, Mooca e Vila Mascote</span>
           </div>
 
           <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-            Relate fiação caída, bueiros e entulho em menos de 15 segundos.
+            Fluxo rápido para relatar fiação caída, bueiros e entulho (meta: até 15 s).
           </h2>
 
           <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
@@ -49,7 +49,7 @@ export function CitizenBanner({ resumo, onAbrirFormulario }) {
             </div>
             <p className="text-2xl font-bold text-amber-900">{resumo.totalCriticas}</p>
             <p className="text-[11px] font-medium text-amber-800 leading-tight mt-0.5">
-              Risco alto / elétrico
+              Chamados de risco alto/crítico
             </p>
           </div>
 
@@ -59,7 +59,7 @@ export function CitizenBanner({ resumo, onAbrirFormulario }) {
             </div>
             <p className="text-2xl font-bold text-emerald-900">{resumo.totalApoios}</p>
             <p className="text-[11px] font-medium text-emerald-800 leading-tight mt-0.5">
-              Apoios sem duplicidade
+              Apoios registrados
             </p>
           </div>
         </div>

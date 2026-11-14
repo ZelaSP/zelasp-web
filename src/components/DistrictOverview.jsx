@@ -46,7 +46,7 @@ export function DistrictOverview({
 
         <div
           className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${corContingencia}`}
-          title="Gatilho Preditivo de Contingência Territorial (calculado pela concentração de risco)"
+          title="Indicador operacional do painel baseado no total de chamados não resolvidos de nível ≥ 4 (Estável < 2 · Atenção 2–3 · Contingência ≥ 4)"
         >
           <Activity className="h-3.5 w-3.5" />
           <span>GPCT: {statusContingencia}</span>

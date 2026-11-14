@@ -5,9 +5,43 @@ export function Header({
   onAbrirFormulario,
   onAlternarPerfil,
   onSair,
+  origemDados,
   apiRemotaAtiva,
 }) {
   const ehPrefeitura = perfil === 'prefeitura';
+  const origemEfetiva = origemDados || (apiRemotaAtiva ? 'nuvem' : 'local');
+
+  const configuracaoOrigem = {
+    nuvem: {
+      rotulo: 'Nuvem',
+      titulo: 'Leitura remota bem-sucedida via MockAPI',
+      classe: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+      nuvem: true,
+    },
+    cache: {
+      rotulo: 'Sem conexão — consulta em cache',
+      titulo: 'Falha ao consultar a API remota; exibindo cache local apenas para leitura',
+      classe: 'bg-amber-50 text-amber-800 border border-amber-200',
+      nuvem: false,
+    },
+    local: {
+      rotulo: 'Dados locais',
+      titulo: 'Leitura em armazenamento local (consulta)',
+      classe: 'bg-slate-100 text-slate-600 border border-slate-200',
+      nuvem: false,
+    },
+    carregando: {
+      rotulo: 'Consultando API...',
+      titulo: 'Consultando base na API remota',
+      classe: 'bg-slate-100 text-slate-600 border border-slate-200',
+      nuvem: false,
+    },
+  }[origemEfetiva] || {
+    rotulo: 'Dados locais',
+    titulo: 'Leitura em armazenamento local (consulta)',
+    classe: 'bg-slate-100 text-slate-600 border border-slate-200',
+    nuvem: false,
+  };
 
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
@@ -56,24 +90,16 @@ export function Header({
               </span>
 
               <span
-                title={
-                  apiRemotaAtiva
-                    ? 'Sincronizado via MockAPI na nuvem'
-                    : 'Armazenamento local ativo (configure VITE_API_URL para nuvem)'
-                }
-                className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                  apiRemotaAtiva
-                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                    : 'bg-slate-100 text-slate-600 border border-slate-200'
-                }`}
+                title={configuracaoOrigem.titulo}
+                className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${configuracaoOrigem.classe}`}
               >
-                {apiRemotaAtiva ? (
+                {configuracaoOrigem.nuvem ? (
                   <>
-                    <Cloud className="h-3 w-3" /> Nuvem
+                    <Cloud className="h-3 w-3" /> {configuracaoOrigem.rotulo}
                   </>
                 ) : (
                   <>
-                    <HardDrive className="h-3 w-3" /> Local
+                    <HardDrive className="h-3 w-3" /> {configuracaoOrigem.rotulo}
                   </>
                 )}
               </span>

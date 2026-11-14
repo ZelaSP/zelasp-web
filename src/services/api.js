@@ -45,15 +45,20 @@ async function popularBaseInicial() {
       criados.push(novo);
     }
   }
-  return criados.length > 0 ? criados : SEED_INCIDENTS;
+  if (criados.length > 0) {
+    salvarLocal(criados);
+    return { dados: criados, origem: 'nuvem' };
+  }
+  return { dados: lerLocal(), origem: 'cache' };
 }
 
 /**
- * READ — Lista todas as ocorrências da API externa (MockAPI) ou armazenamento local.
+ * READ — Lista todas as ocorrências da API externa (MockAPI) ou consulta cache local em caso de falha.
+ * Retorna { dados, origem } onde origem ∈ {'nuvem', 'cache', 'local'}.
  */
 export async function getIncidents() {
   if (!API_URL) {
-    return lerLocal();
+    return { dados: lerLocal(), origem: 'local' };
   }
 
   try {
@@ -62,96 +67,96 @@ export async function getIncidents() {
       throw new Error(`Erro ao carregar ocorrências (${response.status})`);
     }
     const dados = await response.json();
+    if (!Array.isArray(dados)) {
+      throw new Error('Resposta inesperada da API ao listar ocorrências.');
+    }
 
-    // Caso a base do MockAPI esteja recém-criada e vazia, popula uma única vez com ocorrências reais de SP
-    if (Array.isArray(dados) && dados.length === 0) {
+    // Caso a base do MockAPI esteja recém-criada e vazia, popula uma única vez com ocorrências de exemplo
+    if (dados.length === 0) {
       if (!seedEmAndamento) {
         seedEmAndamento = popularBaseInicial().finally(() => {
           seedEmAndamento = null;
         });
       }
-      const iniciais = await seedEmAndamento;
-      salvarLocal(iniciais);
-      return iniciais;
+      return await seedEmAndamento;
     }
 
     salvarLocal(dados);
-    return dados;
+    return { dados, origem: 'nuvem' };
   } catch {
-    return lerLocal();
+    return { dados: lerLocal(), origem: 'cache' };
   }
 }
 
 /**
- * CREATE — Envia um novo chamado de zeladoria para a API.
+ * CREATE — Envia um novo chamado de zeladoria para a API (requer conexão ativa).
  */
 export async function createIncident(payload) {
   if (!API_URL) {
-    const lista = lerLocal();
-    const novoItem = {
-      ...payload,
-      id: String(Date.now()),
-      criadoEm: payload.criadoEm || new Date().toISOString(),
-    };
-    const atualizada = [novoItem, ...lista];
-    salvarLocal(atualizada);
-    return novoItem;
+    throw new Error('API remota não configurada: a operação não foi salva.');
   }
 
-  const response = await fetch(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
+  let response;
+  try {
+    response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+  } catch {
+    throw new Error('Sem conexão com a internet: o relato não foi salvo.');
+  }
 
   if (!response.ok) {
-    throw new Error(`Erro ao registrar ocorrência (${response.status})`);
+    throw new Error(`Erro ao registrar ocorrência (${response.status}): a operação não foi salva.`);
   }
   return response.json();
 }
 
 /**
- * UPDATE — Atualiza campos de uma ocorrência (ex: apoios comunitários, status ou nota técnica).
+ * UPDATE — Atualiza campos de uma ocorrência na API (requer conexão ativa).
  */
 export async function updateIncident(id, updates) {
   if (!API_URL) {
-    const lista = lerLocal();
-    const atualizada = lista.map((item) =>
-      String(item.id) === String(id) ? { ...item, ...updates } : item
-    );
-    salvarLocal(atualizada);
-    return atualizada.find((item) => String(item.id) === String(id));
+    throw new Error('API remota não configurada: a alteração não foi salva.');
   }
 
-  const response = await fetch(`${API_URL}/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(updates),
-  });
+  let response;
+  try {
+    response = await fetch(`${API_URL}/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates),
+    });
+  } catch {
+    throw new Error('Sem conexão com a internet: a alteração não foi salva.');
+  }
 
   if (!response.ok) {
-    throw new Error(`Erro ao atualizar ocorrência (${response.status})`);
+    throw new Error(`Erro ao atualizar ocorrência (${response.status}): a alteração não foi salva.`);
   }
   return response.json();
 }
 
 /**
- * DELETE — Remove ou cancela um registro de ocorrência.
+ * DELETE — Remove ou cancela um registro de ocorrência na API (requer conexão ativa).
  */
 export async function deleteIncident(id) {
   if (!API_URL) {
-    const lista = lerLocal();
-    const atualizada = lista.filter((item) => String(item.id) !== String(id));
-    salvarLocal(atualizada);
-    return { deletedId: id };
+    throw new Error('API remota não configurada: a exclusão não foi realizada.');
   }
 
-  const response = await fetch(`${API_URL}/${id}`, {
-    method: 'DELETE',
-  });
+  let response;
+  try {
+    response = await fetch(`${API_URL}/${id}`, {
+      method: 'DELETE',
+    });
+  } catch {
+    throw new Error('Sem conexão com a internet: a exclusão não foi realizada.');
+  }
 
   if (!response.ok) {
-    throw new Error(`Erro ao remover ocorrência (${response.status})`);
+    throw new Error(`Erro ao remover ocorrência (${response.status}): a exclusão não foi realizada.`);
   }
   return response.json();
 }

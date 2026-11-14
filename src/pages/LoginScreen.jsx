@@ -140,8 +140,9 @@ export function LoginScreen({ onEntrar, onReverAbertura }) {
 
           <p className="mt-4 flex items-start gap-2 rounded-lg border border-slate-200 bg-white p-3 text-xs leading-relaxed text-slate-600">
             <Info className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
-            Protótipo acadêmico: o login é demonstrativo e não valida senha. O que for relatado
-            no modo Cidadão aparece imediatamente no Painel da Prefeitura.
+            Protótipo acadêmico: o login é demonstrativo e não valida senha. Os painéis usam dados
+            compartilhados pela API e atualizados no carregamento; a troca de perfil na mesma aba
+            reaproveita o estado atual.
           </p>
 
           {onReverAbertura && (

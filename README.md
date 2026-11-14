@@ -22,12 +22,27 @@
 * **Problema em uma Frase:** O canal oficial atual (SP 156) é burocrático e opaco, desestimulando relatos rápidos e gerando centenas de chamados duplicados no mesmo quarteirão durante temporais.
 * **Como Funciona (Jornada em 3 Etapas):**
   1. **Abertura Interativa 3D (`SplashScreen` + `ZelaspBackground3D`):** Cenário WebGL *cartoon/toon* em Three.js controlado pela rolagem da página (`GSAP ScrollTrigger` em ~`480vh`), percorrendo os 4 problemas urbanos do ZelaSP (fio elétrico partido, bueiro aberto, entulho na calçada e carro abandonado) até a rua revitalizada e os 3 passos da plataforma.
-  2. **Login Demonstrativo por Perfil (`LoginScreen`):** Permite escolher entrar como **Cidadão** ou como **Prefeitura**.
-  3. **Painéis Conectados em Tempo Real:**
-     * **Área do Cidadão:** Focada em registrar ocorrências em <15 segundos (com autopreenchimento via **ViaCEP** e **GPS**) e apoiar chamados já abertos por vizinhos (**Apoiar +1**) sem criar duplicidade.
-     * **Painel da Prefeitura:** Focado na triagem operacional por gravidade e apoio comunitário, monitoramento do Gatilho Preditivo de Contingência Territorial (**GPCT**), atualização de parecer de vistoria/status (`PUT`) e exclusão de registros inválidos (`DELETE`).
-* **Indicador de Impacto:** Redução do tempo médio de relato para **<15 segundos**, **redução simulada de 38,5% no backlog acumulado** pós-temporal (estudo DPS) e **meta de −45% de chamados duplicados** por meio do apoio comunitário no mesmo raio urbano.
+  2. **Login Demonstrativo por Perfil (`LoginScreen`):** Permite escolher entrar como **Cidadão** ou como **Prefeitura** (protótipo acadêmico; sem validação de senha ou autenticação real de servidor).
+  3. **Painéis com Dados Compartilhados pela API:**
+     * **Área do Cidadão:** Focada na meta de registro em até 15 segundos (a validar com testes de usabilidade), com autopreenchimento opcional via **ViaCEP**, captura opcional de **GPS** do navegador, **seleção demonstrativa de foto** (sem envio, armazenamento ou análise automática nesta versão) e apoio manual a ocorrências existentes para incentivar a redução de relatos repetidos.
+     * **Painel da Prefeitura:** Utiliza dados compartilhados pela API e atualizados no carregamento (a troca de perfil na mesma aba reaproveita o estado atual), ordenado por prioridade decrescente e, no empate, quantidade de apoios decrescente (com resolvidos ao final), exibindo o **GPCT operacional do painel** (baseado no total de chamados não resolvidos de nível ≥4: `< 2` estável, `2–3` atenção, `≥ 4` contingência), parecer de vistoria/status (`PUT`) e exclusão (`DELETE`).
+* **Metas e Resultados Acadêmicos Alinhados:**
+  * **Tempo de relato:** Meta de registro em até 15 segundos, a validar com testes de usabilidade.
+  * **Duplicidade atual e meta:** Apoio manual a ocorrências existentes para incentivar a redução de relatos repetidos; meta futura de reduzir em 45% a parcela de chamados duplicados.
+  * **Resultado matemático (estudo paralelo):** Redução simulada de 38,5% do excedente sobre a base já deduplicada, após reforço de capacidade, nas hipóteses do exercício.
+  * **Foto e localização:** Funcionalidade futura: foto como evidência e apoio à localização da ocorrência; seleção demonstrativa na versão atual.
+  * **Arquitetura:** Web com MockAPI e ViaCEP; CLI Python com JSON; estudo matemático independente; integração entre módulos e IoT prevista na evolução.
 * **ODS Conectados:** ODS 11 (Cidades e Comunidades Sustentáveis) e ODS 9 (Indústria, Inovação e Infraestrutura).
+
+---
+
+## ⚖️ Regra Única de Prioridade e Escopo do Protótipo
+
+1. **Risco elétrico marcado:** resulta em **nível 5** em todas as categorias.
+2. **Sem risco elétrico marcado (prioridade-base):** Tampa de Bueiro (`5`), Buraco (`4`), Fios (`3`), Poda (`3`), Entulho (`2`), Carro Abandonado (`1`).
+3. **Escalonamento comunitário:** a partir de **10 apoios**, acrescenta-se **um único nível** à prioridade-base (teto `5`), recalculado sempre a partir da base. Ocorrências `RESOLVIDO` não recebem novos apoios. Os níveis representam política interna de triagem acadêmica, não classificação oficial da Prefeitura ou concessionária.
+
+> A proposta de evolução do ZelaSP inclui o uso de fotografias como evidência e apoio à localização da ocorrência, aproveitando metadados GPS disponíveis no arquivo e a confirmação do cidadão — considerando inclusive que fotos podem não conter coordenadas válidas, como registra a documentação técnica de referência [ExifInterface — getLatLong](https://developer.android.com/reference/androidx/exifinterface/media/ExifInterface#getLatLong()). No protótipo acadêmico atual, a seleção de foto é demonstrativa: o conteúdo da imagem não é enviado, armazenado ou analisado. O endereço é informado por CEP ou digitação, com captura opcional de GPS do navegador. O protótipo mantém ainda **cache local apenas para consulta** (`Dados locais` ou `Sem conexão — consulta em cache`), exigindo conexão para criação, apoio e edição; upload real de imagens, fila offline de sincronização, deduplicação geográfica automática e autenticação real compõem o roadmap futuro.
 
 ---
 

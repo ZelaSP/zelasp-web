@@ -5,12 +5,14 @@
  */
 
 export function calcularPrioridade(categoria, riscoChoque, apoios = 1) {
+  if (riscoChoque) return 5;
+
   let score = 2;
 
   switch (categoria) {
     case 'Fios e Cabos Rompidos/Soltos':
     case 'Poda de Árvore com Risco Elétrico':
-      score = riscoChoque ? 5 : 3;
+      score = 3;
       break;
     case 'Tampa de Bueiro Furtada/Quebrada':
       score = 5;

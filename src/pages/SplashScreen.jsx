@@ -17,8 +17,8 @@ import { ZelaspBackground3D } from '../components/ZelaspBackground3D';
 const PASSOS = [
   {
     icone: Camera,
-    titulo: 'Relate em 15 segundos',
-    texto: 'Foto, CEP e localização. Sem formulário longo.',
+    titulo: 'Relato rápido (meta: 15 s)',
+    texto: 'CEP opcional, endereço e seleção demonstrativa de foto.',
   },
   {
     icone: ThumbsUp,
@@ -39,7 +39,7 @@ const CENAS = [
     tituloCurto: '1. Fio elétrico',
     detalhe: 'Cidadão relata risco na rede → Equipe religa a fiação',
     subtitulo:
-      'Cabos rompidos soltam faíscas e colocam pedestres em perigo imediato. O ZelaSP classifica o risco no nível máximo logo na abertura.',
+      'Cabos rompidos soltam faíscas e colocam pedestres em perigo imediato. Quando há risco elétrico marcado, o ZelaSP classifica o chamado no nível máximo (5).',
     icone: Zap,
     destaque: 'border-red-200/90 bg-red-50/85 text-red-900',
     iconeCor: 'text-red-600',
@@ -61,7 +61,7 @@ const CENAS = [
     tituloCurto: '3. Entulho',
     detalhe: 'Descarte irregular bloqueando passeio → Limpeza urbana',
     subtitulo:
-      'Restos de obra no passeio obrigam o pedestre a caminhar no asfalto entre veículos; fotos e apoios aceleram a remoção.',
+      'Restos de obra no passeio obrigam o pedestre a caminhar no asfalto entre veículos; apoios comunitários reforçam a prioridade da remoção.',
     icone: Construction,
     destaque: 'border-amber-200/90 bg-amber-50/85 text-amber-900',
     iconeCor: 'text-amber-700',
